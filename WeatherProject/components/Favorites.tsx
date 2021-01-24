@@ -7,7 +7,7 @@ const Favorites = ({ navigation }: NavigationProps) => {
 
     return (
         <View style={styles.container}>
-            <Text>FAVORITES</Text>
+            <Text>Favoriets</Text>
         </View>
     );
 };
