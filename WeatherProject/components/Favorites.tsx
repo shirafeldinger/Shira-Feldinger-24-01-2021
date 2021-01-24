@@ -11,7 +11,6 @@ const Favorites = ({ navigation }: NavigationProps) => {
         </View>
     );
 };
-
 export default Favorites;
 
 const styles = StyleSheet.create({
