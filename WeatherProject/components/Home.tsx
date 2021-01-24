@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Button, StyleSheet, Text, View } from "react-native";
+import { TextInput } from "react-native-gesture-handler";
 import { useDispatch, useSelector } from "react-redux";
 import { ActionTypes, CurrentWeather, FiveDatsForeCastType, NavigationProps, WeatherState } from "../types";
 
@@ -7,11 +8,29 @@ const Home = ({ navigation }: NavigationProps) => {
     const currentDay = useSelector<WeatherState>(state => state.currentDay) as CurrentWeather;
     const fiveDaysForecast = useSelector<WeatherState>(state => state.fiveDaysForecast) as Array<FiveDatsForeCastType>;
     const dispatch = useDispatch();
+    const [input, setInput] = useState('')
 
     useEffect(() => {
         fetchCurrentWeather()
         fiveDaysForecasts()
+        fetchLocation()
     }, []);
+
+
+    const fetchLocation = async () => {
+        const baseUrl = 'http://dataservice.accuweather.com/locations/v1/cities/autocomplete'
+        try {
+            const res = await fetch(`${baseUrl}/q=${input}?apikey=AajKuPVPSQaHeVqfDiMiscjqoUbACFMx`)
+            const data = await res.json()
+
+            if (data) {
+                console.log(data);
+
+            }
+        } catch (err) {
+            console.error('Error fetching data!!', err)
+        };
+    };
 
 
     const fetchCurrentWeather = async () => {
@@ -47,6 +66,10 @@ const Home = ({ navigation }: NavigationProps) => {
 
     return (
         <View style={styles.container}>
+
+            <TextInput style={{ height: 40, borderColor: 'gray', borderWidth: 1 }}
+                onChangeText={text => setInput(text)}
+                value={input} />
 
             <View>
                 <Text>Current Weather:</Text>
