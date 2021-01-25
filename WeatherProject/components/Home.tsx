@@ -2,22 +2,26 @@ import React, { useEffect, useState } from "react";
 import { Button, StyleSheet, Text, View } from "react-native";
 import { TextInput } from "react-native-gesture-handler";
 import { useDispatch, useSelector } from "react-redux";
-import { ActionTypes, CurrentWeather, FiveDaysForecast, NavigationProps, WeatherState } from "../types";
+import { ActionTypes, CurrentWeather, FiveDaysForecast, WeatherState, Location } from "../types";
 import { demiCurrent, demiFive, demiLocal } from "../demiData"
 
-const Home = ({ navigation }: NavigationProps) => {
+const Home = () => {
     const currentDay = useSelector<WeatherState>(state => state.currentDay) as CurrentWeather;
     const fiveDaysForecast = useSelector<WeatherState>(state => state.fiveDaysForecast) as FiveDaysForecast;
+    const location = useSelector<WeatherState>(state => state.location) as Location;
     const dispatch = useDispatch();
     const [input, setInput] = useState(`Tel Aviv`)
 
     useEffect(() => {
-        // fetchCurrentWeather()
-        // fiveDaysForecasts()
-        // fetchLocation()
+        // allFetches()
+
     }, []);
 
-
+    const allFetches = async () => {
+        await fetchLocation()
+        fetchCurrentWeather()
+        fiveDaysForecasts()
+    }
     const fetchLocation = async () => {
         const baseUrl = 'http://dataservice.accuweather.com/locations/v1/cities/autocomplete'
         try {
@@ -25,8 +29,7 @@ const Home = ({ navigation }: NavigationProps) => {
             const data = await res.json()
 
             if (data[0]) {
-                console.log(data);
-
+                dispatch({ type: ActionTypes.setLocation, location: data[0] });
             }
         } catch (err) {
             console.error('Fetch location error', err)
@@ -37,7 +40,7 @@ const Home = ({ navigation }: NavigationProps) => {
     const fetchCurrentWeather = async () => {
         const baseUrl = 'http://dataservice.accuweather.com/currentconditions/v1'
         try {
-            const res = await fetch(`${baseUrl}/215854?apikey=AajKuPVPSQaHeVqfDiMiscjqoUbACFMx`)
+            const res = await fetch(`${baseUrl}/${location.Key}?apikey=AajKuPVPSQaHeVqfDiMiscjqoUbACFMx`)
             const data = await res.json()
 
             if (data[0]) {
@@ -51,7 +54,7 @@ const Home = ({ navigation }: NavigationProps) => {
     const fiveDaysForecasts = async () => {
         const baseUrl = 'http://dataservice.accuweather.com/forecasts/v1/daily/5day'
         try {
-            const res = await fetch(`${baseUrl}/215854?apikey=AajKuPVPSQaHeVqfDiMiscjqoUbACFMx`)
+            const res = await fetch(`${baseUrl}/${location.Key}?apikey=AajKuPVPSQaHeVqfDiMiscjqoUbACFMx`)
             const data = await res.json()
 
             if (data) {
@@ -76,10 +79,10 @@ const Home = ({ navigation }: NavigationProps) => {
                 </View>
                 <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
                     <Text>5-day forecast:</Text>
-                    <Text style={styles.headlineStyle}>{demiFive.Headline.Text}</Text>
+                    <Text style={styles.headlineStyle}>{demiFive?.Headline?.Text}</Text>
                 </View>
                 <View style={styles.fiveDaysForecastView}>
-                    {demiFive.DailyForecasts.map(dailyForecast => {
+                    {demiFive?.DailyForecasts?.map(dailyForecast => {
                         const date = new Date(dailyForecast.Date).toString();
                         const spaceIndex = date.indexOf(' ')
                         return (

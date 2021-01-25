@@ -52,12 +52,13 @@ export interface DailyForecasts {
   };
 }
 export type FiveDaysForecast = {
-  Headline: Headline;
-  DailyForecasts: Array<DailyForecasts>;
+  Headline: Headline | null;
+  DailyForecasts: Array<DailyForecasts> | null;
 };
 export enum ActionTypes {
   SetCurrentWeather = 'SET_CURRENT_WEATHER',
   setFiveDaysForecast = 'SET_FIVE_DAYS_FORECAST',
+  setLocation = 'SET_LOCATION',
 }
 
 export type Location = {
@@ -73,6 +74,7 @@ export type Location = {
 export type WeatherState = {
   currentDay: CurrentWeather | null;
   fiveDaysForecast: FiveDaysForecast;
+  location: Location | null;
 };
 
 export type WeatherActions =
@@ -83,6 +85,10 @@ export type WeatherActions =
   | {
       type: ActionTypes.setFiveDaysForecast;
       fiveDaysForecast: FiveDaysForecast;
+    }
+  | {
+      type: ActionTypes.setLocation;
+      location: Location | null;
     };
 
 export type RootStackParamList = {
