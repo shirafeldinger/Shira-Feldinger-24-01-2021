@@ -11,9 +11,9 @@ const Home = ({ navigation }: NavigationProps) => {
     const [input, setInput] = useState('')
 
     useEffect(() => {
-        fetchCurrentWeather()
-        fiveDaysForecasts()
-        fetchLocation()
+        // fetchCurrentWeather()
+        // fiveDaysForecasts()
+        // fetchLocation()
     }, []);
 
 
@@ -28,7 +28,7 @@ const Home = ({ navigation }: NavigationProps) => {
 
             }
         } catch (err) {
-            console.error('Error fetching data!!', err)
+            console.error('Fetch location error', err)
         };
     };
 
@@ -43,7 +43,7 @@ const Home = ({ navigation }: NavigationProps) => {
                 dispatch({ type: ActionTypes.SetCurrentWeather, currentDay: data[0] });
             }
         } catch (err) {
-            console.error('Error fetching data!!', err)
+            console.error('current weather error!', err)
         };
     };
 
@@ -57,7 +57,7 @@ const Home = ({ navigation }: NavigationProps) => {
                 dispatch({ type: ActionTypes.setFiveDaysForecast, fiveDaysForecast: data });
             }
         } catch (err) {
-            console.error('Error fetching data!!', err)
+            console.error('five days error', err)
         };
     }
 
@@ -66,14 +66,15 @@ const Home = ({ navigation }: NavigationProps) => {
 
     return (
         <View style={styles.container}>
-
-            <TextInput style={{ height: 40, borderColor: 'gray', borderWidth: 1 }}
+            <TextInput style={styles.inputStyle}
                 onChangeText={text => setInput(text)}
                 value={input} />
-
-            <View>
+            <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
                 <Text>Current Weather:</Text>
                 <Text>{currentDay?.WeatherText}</Text>
+            </View>
+
+            <View style={{ flex: 5, alignItems: 'center', justifyContent: 'center' }}>
                 <Text>{`${currentDay?.Temperature.Metric.Value}  ${currentDay?.Temperature.Metric.Unit}`}</Text>
             </View>
             {/* {
@@ -84,7 +85,6 @@ const Home = ({ navigation }: NavigationProps) => {
         })
       }; */}
 
-            <Button title='favoriets' onPress={() => navigation.navigate('Favoriets')} />
         </View>
     );
 };
@@ -94,8 +94,13 @@ export default Home;
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: "#fff",
-        alignItems: "center",
-        justifyContent: "center",
     },
+    inputStyle: {
+        borderColor: 'gray',
+        borderWidth: 1,
+        width: '50%',
+        alignSelf: 'center',
+        flex: 1
+
+    }
 });
