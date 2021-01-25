@@ -7,10 +7,10 @@ export interface Temperature {
   };
   
   export interface CurrentWeather {
-    EpochTime: number;
-    HasPrecipitation: boolean;
+    EpochTime?: number;
+    HasPrecipitation?: boolean;
     IsDayTime: boolean;
-    Link: string;
+    Link?: string;
     LocalObservationDateTime: string;
     MobileLink: string;
     PrecipitationType: any;
@@ -28,11 +28,11 @@ export interface Temperature {
     IconPhrase: string;
   }
   export interface FiveDatsForeCastType {
-    Date: Date,
+    Date: string,
     Day: DayNight,
-    EpochDate: number;
-    Link: string;
-    MobileLink: string;
+    EpochDate?: number;
+    Link?: string;
+    MobileLink?: string;
     Night: DayNight;
     Maximum: Temperature;
     Minimum: Temperature;
