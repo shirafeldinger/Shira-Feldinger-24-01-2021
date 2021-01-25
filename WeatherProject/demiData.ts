@@ -1,4 +1,4 @@
-let demiCurrent = {
+export const demiCurrent = {
     EpochTime: 1611599460,
     HasPrecipitation: false,
     IsDayTime: false,
@@ -23,7 +23,19 @@ let demiCurrent = {
 
 };
 
-let demiFive = [{
+export const demiFive ={
+    Headline:{
+    Category: "rain",
+    EffectiveDate: "2021-01-28T19:00:00+02:00",
+    EffectiveEpochDate: 1611853200,
+    EndDate: "2021-01-29T13:00:00+02:00",
+    EndEpochDate: 1611918000,
+    Link: "http://www.accuweather.com/en/il/tel-aviv/215854/daily-weather-forecast/215854?lang=en-us",
+    MobileLink: "http://m.accuweather.com/en/il/tel-aviv/215854/extended-weather-forecast/215854?lang=en-us",
+    Severity: 4,
+    Text: "Expect rainy weather Thursday evening through Friday morning"
+    },
+    DailyForecasts: [{
     Date: "2021-01-25T07:00:00+02:00",
     Day: {
         HasPrecipitation: false,
@@ -134,4 +146,4 @@ let demiFive = [{
         Value: 42,
     }
 
-}]
+}]}
