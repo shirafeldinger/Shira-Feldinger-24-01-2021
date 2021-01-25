@@ -21,7 +21,7 @@ const Home = ({ navigation }: NavigationProps) => {
     const fetchLocation = async () => {
         const baseUrl = 'http://dataservice.accuweather.com/locations/v1/cities/autocomplete'
         try {
-            const res = await fetch(`${baseUrl}/q=${input}?apikey=AajKuPVPSQaHeVqfDiMiscjqoUbACFMx`)
+            const res = await fetch(`${baseUrl}?apikey=AajKuPVPSQaHeVqfDiMiscjqoUbACFMx&q=${input}`)
             const data = await res.json()
 
             if (data) {
@@ -68,7 +68,7 @@ const Home = ({ navigation }: NavigationProps) => {
                 onChangeText={text => setInput(text)}
                 value={input} />
             <View style={{ flex: 1 }}>
-                <View>
+                <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
                     <Text>Current Weather:</Text>
                     <Text>Tel Aviv</Text>
                     <Text>{demiCurrent.WeatherText}</Text>
