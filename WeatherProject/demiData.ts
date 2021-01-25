@@ -1,4 +1,6 @@
-export const demiCurrent = {
+import {CurrentWeather, FiveDaysForecast, Location} from './types';
+
+export const demiCurrent: CurrentWeather = {
   EpochTime: 1611599460,
   HasPrecipitation: false,
   IsDayTime: false,
@@ -24,7 +26,7 @@ export const demiCurrent = {
   WeatherText: 'clear',
 };
 
-export const demiFive = {
+export const demiFive: FiveDaysForecast = {
   Headline: {
     Category: 'rain',
     EffectiveDate: '2021-01-28T19:00:00+02:00',
@@ -167,19 +169,18 @@ export const demiFive = {
   ],
 };
 
-export const demiLocal = [
-  {
-    AdministrativeArea: {
-      ID: 'TA',
-      LocalizedName: 'Tel Aviv',
-    },
-    Country: {
-      ID: 'IL',
-      LocalizedName: 'Israel',
-    },
-    Key: '215854',
+export const demiLocal: Location = {
+  AdministrativeArea: {
+    ID: 'TA',
     LocalizedName: 'Tel Aviv',
-    Rank: 31,
-    Type: 'City',
   },
-];
+  Country: {
+    ID: 'IL',
+    LocalizedName: 'Israel',
+  },
+  Key: '215854',
+  LocalizedName: 'Tel Aviv',
+  Rank: 31,
+  Type: 'City',
+  Verison: 1,
+};

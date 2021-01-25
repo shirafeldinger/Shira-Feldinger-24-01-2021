@@ -46,8 +46,10 @@ export interface DailyForecasts {
   Link?: string;
   MobileLink?: string;
   Night: DayNight;
-  Maximum: Temperature;
-  Minimum: Temperature;
+  Temperature: {
+    Maximum: Temperature;
+    Minimum: Temperature;
+  };
 }
 export type FiveDaysForecast = {
   Headline: Headline;
@@ -57,6 +59,16 @@ export enum ActionTypes {
   SetCurrentWeather = 'SET_CURRENT_WEATHER',
   setFiveDaysForecast = 'SET_FIVE_DAYS_FORECAST',
 }
+
+export type Location = {
+  LocalizedName: string;
+  Country: {ID: string; LocalizedName: string};
+  AdministrativeArea: {ID: string; LocalizedName: string};
+  Key: string;
+  Rank: number;
+  Type: string;
+  Verison: number;
+};
 
 export type WeatherState = {
   currentDay: CurrentWeather | null;

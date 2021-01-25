@@ -3,7 +3,7 @@ import { Button, StyleSheet, Text, View } from "react-native";
 import { TextInput } from "react-native-gesture-handler";
 import { useDispatch, useSelector } from "react-redux";
 import { ActionTypes, CurrentWeather, FiveDaysForecast, NavigationProps, WeatherState } from "../types";
-import { demiCurrent, demiFive } from "../demiData"
+import { demiCurrent, demiFive, demiLocal } from "../demiData"
 
 const Home = ({ navigation }: NavigationProps) => {
     const currentDay = useSelector<WeatherState>(state => state.currentDay) as CurrentWeather;
@@ -24,7 +24,7 @@ const Home = ({ navigation }: NavigationProps) => {
             const res = await fetch(`${baseUrl}?apikey=AajKuPVPSQaHeVqfDiMiscjqoUbACFMx&q=${input}`)
             const data = await res.json()
 
-            if (data) {
+            if (data[0]) {
                 console.log(data);
 
             }
@@ -70,7 +70,7 @@ const Home = ({ navigation }: NavigationProps) => {
             <View style={{ flex: 1 }}>
                 <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
                     <Text>Current Weather:</Text>
-                    <Text>Tel Aviv</Text>
+                    <Text>{demiLocal.LocalizedName}</Text>
                     <Text>{demiCurrent.WeatherText}</Text>
                     <Text>{demiCurrent.Temperature.Metric.Value}{demiCurrent.Temperature.Metric.Unit}</Text>
                 </View>
