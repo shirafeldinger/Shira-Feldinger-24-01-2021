@@ -62,28 +62,38 @@ const Home = ({ navigation }: NavigationProps) => {
         };
     };
 
-    console.log(fiveDaysForecast);
-
-
     return (
         <View style={styles.container}>
             <TextInput style={styles.inputStyle}
                 onChangeText={text => setInput(text)}
                 value={input} />
-            <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-                <Text style={{ fontSize: 23, textTransform: 'capitalize', textAlign: 'center' }}>{demiFive.Headline.Text}</Text>
-            </View>
+            <View style={{ flex: 1 }}>
+                <View>
+                    <Text>Current Weather:</Text>
+                    <Text>Tel Aviv</Text>
+                    <Text>{demiCurrent.WeatherText}</Text>
+                    <Text>{demiCurrent.Temperature.Metric.Value}{demiCurrent.Temperature.Metric.Unit}</Text>
+                </View>
+                <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+                    <Text>5-day forecast:</Text>
+                    <Text style={styles.headlineStyle}>{demiFive.Headline.Text}</Text>
+                </View>
+                <View style={styles.fiveDaysForecastView}>
+                    {demiFive.DailyForecasts.map(dailyForecast => {
+                        const date = new Date(dailyForecast.Date).toString();
+                        const spaceIndex = date.indexOf(' ')
+                        return (
+                            <View key={dailyForecast.Date} style={styles.dailyForecastView}>
+                                <Text style={{ textAlign: 'center' }}>{date.substr(0, spaceIndex)}</Text>
+                                <Text style={{ textAlign: 'center' }}>{`Max:${dailyForecast?.Temperature?.Maximum.Value}${dailyForecast?.Temperature?.Maximum.Unit}`}</Text>
+                                <Text style={{ textAlign: 'center' }} >{`Min:${dailyForecast?.Temperature?.Minimum.Value}${dailyForecast?.Temperature?.Minimum.Unit}`}</Text>
+                            </View>
+                        )
+                    })}
+                </View>
 
-            <View style={{ flex: 5, alignItems: 'center', justifyContent: 'center' }}>
-                <Text>{`${demiCurrent?.Temperature.Metric.Value}  ${demiCurrent?.Temperature.Metric.Unit}`}</Text>
+
             </View>
-            {/* {
-        fiveDaysForecast.map(day => {
-          return (
-            <Text>{day.Date.toString()}</Text>
-          )
-        })
-      }; */}
 
         </View>
     );
@@ -100,7 +110,22 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         width: '50%',
         alignSelf: 'center',
-        flex: 1
+    },
+    headlineStyle: {
+        fontSize: 23,
+        textTransform: 'capitalize',
+        textAlign: 'center'
+    },
+    fiveDaysForecastView: {
+        flex: 3,
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        alignItems: 'center'
+    },
+    dailyForecastView: {
+        borderColor: 'black',
+        borderWidth: 1,
+        padding: 10
+    },
 
-    }
 });

@@ -51,15 +51,17 @@ export const demiFive = {
         Icon: 33,
         IconPhrase: 'Clear',
       },
-      Maximum: {
-        Unit: 'F',
-        UnitType: 18,
-        Value: 64,
-      },
-      Minimum: {
-        Unit: 'F',
-        UnitType: 18,
-        Value: 43,
+      Temperature: {
+        Maximum: {
+          Unit: 'F',
+          UnitType: 18,
+          Value: 64,
+        },
+        Minimum: {
+          Unit: 'F',
+          UnitType: 18,
+          Value: 43,
+        },
       },
     },
     {
@@ -74,15 +76,17 @@ export const demiFive = {
         Icon: 36,
         IconPhrase: 'Intermittent clouds',
       },
-      Maximum: {
-        Unit: 'F',
-        UnitType: 18,
-        Value: 72,
-      },
-      Minimum: {
-        Unit: 'F',
-        UnitType: 18,
-        Value: 51,
+      Temperature: {
+        Maximum: {
+          Unit: 'F',
+          UnitType: 18,
+          Value: 72,
+        },
+        Minimum: {
+          Unit: 'F',
+          UnitType: 18,
+          Value: 51,
+        },
       },
     },
     {
@@ -97,15 +101,17 @@ export const demiFive = {
         Icon: 39,
         IconPhrase: 'Partly cloudy w/ showers',
       },
-      Maximum: {
-        Unit: 'F',
-        UnitType: 18,
-        Value: 74,
-      },
-      Minimum: {
-        Unit: 'F',
-        UnitType: 18,
-        Value: 45,
+      Temperature: {
+        Maximum: {
+          Unit: 'F',
+          UnitType: 18,
+          Value: 74,
+        },
+        Minimum: {
+          Unit: 'F',
+          UnitType: 18,
+          Value: 45,
+        },
       },
     },
     {
@@ -120,15 +126,17 @@ export const demiFive = {
         Icon: 18,
         IconPhrase: 'Rain',
       },
-      Maximum: {
-        Unit: 'F',
-        UnitType: 18,
-        Value: 60,
-      },
-      Minimum: {
-        Unit: 'F',
-        UnitType: 18,
-        Value: 44,
+      Temperature: {
+        Maximum: {
+          Unit: 'F',
+          UnitType: 18,
+          Value: 60,
+        },
+        Minimum: {
+          Unit: 'F',
+          UnitType: 18,
+          Value: 44,
+        },
       },
     },
     {
@@ -143,15 +151,17 @@ export const demiFive = {
         Icon: 35,
         IconPhrase: 'Partly cloudy',
       },
-      Maximum: {
-        Unit: 'F',
-        UnitType: 18,
-        Value: 58,
-      },
-      Minimum: {
-        Unit: 'F',
-        UnitType: 18,
-        Value: 42,
+      Temperature: {
+        Maximum: {
+          Unit: 'F',
+          UnitType: 18,
+          Value: 58,
+        },
+        Minimum: {
+          Unit: 'F',
+          UnitType: 18,
+          Value: 42,
+        },
       },
     },
   ],
