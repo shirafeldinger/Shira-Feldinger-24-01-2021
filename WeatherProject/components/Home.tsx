@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, StyleSheet, Text, View } from "react-native";
+import { Button, Image, StyleSheet, Text, View } from "react-native";
 import { TextInput } from "react-native-gesture-handler";
 import { useDispatch, useSelector } from "react-redux";
 import { ActionTypes, CurrentWeather, FiveDaysForecast, WeatherState, Location } from "../types";
@@ -83,13 +83,15 @@ const Home = () => {
                 </View>
                 <View style={styles.fiveDaysForecastView}>
                     {demiFive?.DailyForecasts?.map(dailyForecast => {
+                        // console.log(dailyForecast.Day.Icon.toString());
                         const date = new Date(dailyForecast.Date).toString();
                         const spaceIndex = date.indexOf(' ')
                         return (
                             <View key={dailyForecast.Date} style={styles.dailyForecastView}>
                                 <Text style={{ textAlign: 'center' }}>{date.substr(0, spaceIndex)}</Text>
-                                <Text style={{ textAlign: 'center' }}>{`Max:${dailyForecast?.Temperature?.Maximum.Value}${dailyForecast?.Temperature?.Maximum.Unit}`}</Text>
-                                <Text style={{ textAlign: 'center' }} >{`Min:${dailyForecast?.Temperature?.Minimum.Value}${dailyForecast?.Temperature?.Minimum.Unit}`}</Text>
+                                <Image style={{ width: 50, height: 50 }} source={require(`../resources/weather-icons/1.png`)} />
+                                <Text style={{ textAlign: 'center' }}>{`Max:${dailyForecast?.Temperature?.Maximum.Value}°${dailyForecast?.Temperature?.Maximum.Unit}`}</Text>
+                                <Text style={{ textAlign: 'center' }} >{`Min:${dailyForecast?.Temperature?.Minimum.Value}°${dailyForecast?.Temperature?.Minimum.Unit}`}</Text>
                             </View>
                         )
                     })}
@@ -97,7 +99,6 @@ const Home = () => {
 
 
             </View>
-
         </View>
     );
 };
@@ -109,6 +110,7 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     inputStyle: {
+        margin: 10,
         borderColor: 'gray',
         borderWidth: 1,
         width: '50%',
