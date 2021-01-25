@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Button, Image, StyleSheet, Text, View } from "react-native";
-import { TextInput } from "react-native-gesture-handler";
+import { Image, StyleSheet, Text, View } from "react-native";
+import { ScrollView, TextInput } from "react-native-gesture-handler";
 import { useDispatch, useSelector } from "react-redux";
 import { ActionTypes, CurrentWeather, FiveDaysForecast, WeatherState, Location } from "../types";
 import { demiCurrent, demiFive, demiLocal } from "../demiData"
@@ -67,20 +67,24 @@ const Home = () => {
 
     return (
         <View style={styles.container}>
-            <TextInput style={styles.inputStyle}
-                onChangeText={text => setInput(text)}
-                value={input} />
-            <View style={{ flex: 1 }}>
-                <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-                    <Text>Current Weather:</Text>
-                    <Text>{demiLocal.LocalizedName}</Text>
-                    <Text>{demiCurrent.WeatherText}</Text>
-                    <Text>{demiCurrent.Temperature.Metric.Value}{demiCurrent.Temperature.Metric.Unit}</Text>
+            <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }} >
+                <TextInput style={styles.inputStyle}
+                    onChangeText={text => setInput(text)}
+                    value={input} />
+            </View>
+            <View style={{ flex: 2, justifyContent: 'space-between' }} >
+                <View style={{ alignItems: 'center', justifyContent: 'center' }}>
+                    <Text style={styles.labelStyle}>Current Weather:</Text>
+                    <Text style={styles.textStyle}>{demiLocal.LocalizedName}</Text>
+                    <Text style={styles.textStyle}>{demiCurrent.WeatherText}</Text>
+                    <Text style={styles.textStyle}>{`${demiCurrent.Temperature.Metric.Value}°${demiCurrent.Temperature.Metric.Unit}`}</Text>
                 </View>
-                <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-                    <Text>5-day forecast:</Text>
-                    <Text style={styles.headlineStyle}>{demiFive?.Headline?.Text}</Text>
+                <View style={{ alignItems: 'center', justifyContent: 'center' }}>
+                    <Text style={styles.labelStyle} > next 5 day forecast:</Text>
+                    <Text style={styles.textStyle}>{demiFive?.Headline?.Text}</Text>
                 </View>
+            </View>
+            <ScrollView horizontal={true}>
                 <View style={styles.fiveDaysForecastView}>
                     {demiFive?.DailyForecasts?.map(dailyForecast => {
                         // console.log(dailyForecast.Day.Icon.toString());
@@ -88,18 +92,16 @@ const Home = () => {
                         const spaceIndex = date.indexOf(' ')
                         return (
                             <View key={dailyForecast.Date} style={styles.dailyForecastView}>
-                                <Text style={{ textAlign: 'center' }}>{date.substr(0, spaceIndex)}</Text>
-                                <Image style={{ width: 50, height: 50 }} source={require(`../resources/weather-icons/1.png`)} />
-                                <Text style={{ textAlign: 'center' }}>{`Max:${dailyForecast?.Temperature?.Maximum.Value}°${dailyForecast?.Temperature?.Maximum.Unit}`}</Text>
-                                <Text style={{ textAlign: 'center' }} >{`Min:${dailyForecast?.Temperature?.Minimum.Value}°${dailyForecast?.Temperature?.Minimum.Unit}`}</Text>
+                                <Text style={styles.textStyle}>{date.substr(0, spaceIndex)}</Text>
+                                <Image style={styles.imageStyle} source={require(`../resources/weather-icons/1.png`)} />
+                                <Text>{`Max: ${dailyForecast?.Temperature?.Maximum.Value}°${dailyForecast?.Temperature?.Maximum.Unit}`}</Text>
+                                <Text>{`Min: ${dailyForecast?.Temperature?.Minimum.Value}°${dailyForecast?.Temperature?.Minimum.Unit}`}</Text>
                             </View>
                         )
                     })}
                 </View>
-
-
-            </View>
-        </View>
+            </ScrollView>
+        </View >
     );
 };
 
@@ -110,27 +112,39 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     inputStyle: {
-        margin: 10,
         borderColor: 'gray',
         borderWidth: 1,
         width: '50%',
         alignSelf: 'center',
+        textAlign: 'center',
+        fontSize: 17
     },
-    headlineStyle: {
+
+    labelStyle: {
         fontSize: 23,
         textTransform: 'capitalize',
-        textAlign: 'center'
+        textAlign: 'center',
+        fontWeight: 'bold',
+    },
+    textStyle: {
+        fontSize: 18,
+        textAlign: 'center',
+    },
+    imageStyle: {
+        width: 50,
+        height: 50,
+        alignSelf: 'center'
     },
     fiveDaysForecastView: {
-        flex: 3,
+        flex: 1,
         flexDirection: 'row',
-        justifyContent: 'space-around',
-        alignItems: 'center'
+        alignItems: 'center',
     },
     dailyForecastView: {
         borderColor: 'black',
         borderWidth: 1,
-        padding: 10
+        padding: 20,
+        margin: 10,
     },
 
 });
