@@ -2,12 +2,12 @@ import React, { useEffect, useState } from "react";
 import { Button, StyleSheet, Text, View } from "react-native";
 import { TextInput } from "react-native-gesture-handler";
 import { useDispatch, useSelector } from "react-redux";
-import { ActionTypes, CurrentWeather, FiveDatsForeCastType, NavigationProps, WeatherState } from "../types";
+import { ActionTypes, CurrentWeather, FiveDaysForecast, NavigationProps, WeatherState } from "../types";
 import { demiCurrent, demiFive } from "../demiData"
 
 const Home = ({ navigation }: NavigationProps) => {
     const currentDay = useSelector<WeatherState>(state => state.currentDay) as CurrentWeather;
-    const fiveDaysForecast = useSelector<WeatherState>(state => state.fiveDaysForecast) as Array<FiveDatsForeCastType>;
+    const fiveDaysForecast = useSelector<WeatherState>(state => state.fiveDaysForecast) as FiveDaysForecast;
     const dispatch = useDispatch();
     const [input, setInput] = useState(`Tel Aviv`)
 
@@ -54,13 +54,15 @@ const Home = ({ navigation }: NavigationProps) => {
             const res = await fetch(`${baseUrl}/215854?apikey=AajKuPVPSQaHeVqfDiMiscjqoUbACFMx`)
             const data = await res.json()
 
-            if (data.DailyForecasts) {
+            if (data) {
                 dispatch({ type: ActionTypes.setFiveDaysForecast, fiveDaysForecast: data });
             }
         } catch (err) {
             console.error('five days error', err)
         };
     };
+
+    console.log(fiveDaysForecast);
 
 
     return (
@@ -69,8 +71,7 @@ const Home = ({ navigation }: NavigationProps) => {
                 onChangeText={text => setInput(text)}
                 value={input} />
             <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-                <Text>Current Weather:</Text>
-                <Text>{demiCurrent?.WeatherText}</Text>
+                <Text style={{ fontSize: 23, textTransform: 'capitalize', textAlign: 'center' }}>{demiFive.Headline.Text}</Text>
             </View>
 
             <View style={{ flex: 5, alignItems: 'center', justifyContent: 'center' }}>
