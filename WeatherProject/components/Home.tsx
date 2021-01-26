@@ -1,21 +1,23 @@
 import React, { Fragment, useEffect, useState } from "react";
 import { Image, StyleSheet, View } from "react-native";
-import { Text, Card, Icon } from 'react-native-elements';
+import { Text, Card, Icon, Button } from 'react-native-elements';
 import { ScrollView, TextInput } from "react-native-gesture-handler";
 import { useDispatch, useSelector } from "react-redux";
 import { ActionTypes, CurrentWeather, FiveDaysForecast, WeatherState, Location } from "../types";
-import { demiCurrent, demiFive, demiLocal } from "../demiData"
+import { demiCurrent, demiFive, demiLocal } from "../demiData";
+import Toast from 'react-native-toast-message';
 
 const Home = () => {
     const currentDay = useSelector<WeatherState>(state => state.currentDay) as CurrentWeather;
     const fiveDaysForecast = useSelector<WeatherState>(state => state.fiveDaysForecast) as FiveDaysForecast;
     const location = useSelector<WeatherState>(state => state.location) as Location;
+    const searchedCity = useSelector<WeatherState>(state => state.searchedCity) as string;
     const dispatch = useDispatch();
-    const [input, setInput] = useState(`Tel Aviv`)
+    const [input, setInput] = useState('')
+    const [err, setErr] = useState('')
 
     useEffect(() => {
         // allFetches()
-
     }, []);
 
     const allFetches = async () => {
@@ -26,16 +28,20 @@ const Home = () => {
     const fetchLocation = async () => {
         const baseUrl = 'http://dataservice.accuweather.com/locations/v1/cities/autocomplete'
         try {
-            const res = await fetch(`${baseUrl}?apikey=AajKuPVPSQaHeVqfDiMiscjqoUbACFMx&q=${input}`)
+            const res = await fetch(`${baseUrl}?apikey=AajKuPVPSQaHeVqfDiMiscjqoUbACFMx&q=${searchedCity}`)
             const data = await res.json()
 
             if (data[0]) {
                 dispatch({ type: ActionTypes.setLocation, location: data[0] });
             }
         } catch (err) {
-            console.error('Fetch location error', err)
+            console.error('Fetch location error', setErr(err))
         };
     };
+    console.log(input);
+    console.log(searchedCity);
+    console.log(location);
+    console.log(err);
 
 
     const fetchCurrentWeather = async () => {
@@ -66,17 +72,28 @@ const Home = () => {
         };
     };
 
-    const buttons = ['home', 'Favorites']
+    const searchedValidation = () => {
+        setInput('');
+        if (input.length === 0) {
+            alert('Please enter a city name')
+            return;
+        };
+        if (err) {
+            alert(err)
+        }
+        dispatch({ type: ActionTypes.setSearchedCity, searchedCity: input });
+    }
 
     return (
         <View style={styles.container}>
-            <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }} >
+            <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', flexDirection: 'row' }} >
                 <TextInput style={styles.inputStyle}
-                    onChangeText={text => setInput(text)}
+                    onChangeText={text => { text.replace(/[^A-Za-z]/ig, ''); setInput(text) }}
                     placeholder="Search City..."
                     value={input} />
+                <Button title='search' onPress={searchedValidation} />
             </View>
-            <View style={{ flex: 2.5, justifyContent: 'space-between' }} >
+            <View style={{ flex: 2, justifyContent: 'space-around' }} >
                 <View style={{ alignItems: 'center', justifyContent: 'center' }}>
                     <Text h3 style={styles.labelStyle}>Current Weather:</Text>
                     <Text style={styles.textStyle}>{demiLocal.LocalizedName}</Text>
@@ -88,7 +105,7 @@ const Home = () => {
                     <Text style={styles.textStyle}>{demiFive?.Headline?.Text}</Text>
                 </View>
             </View>
-            <ScrollView horizontal={true}>
+            <ScrollView style={{ flex: 1 }} horizontal={true}>
                 <View style={styles.fiveDaysForecastView}>
                     {demiFive?.DailyForecasts?.map(dailyForecast => {
                         // console.log(dailyForecast.Day.Icon.toString());

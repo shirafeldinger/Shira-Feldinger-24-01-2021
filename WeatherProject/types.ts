@@ -59,6 +59,7 @@ export enum ActionTypes {
   SetCurrentWeather = 'SET_CURRENT_WEATHER',
   setFiveDaysForecast = 'SET_FIVE_DAYS_FORECAST',
   setLocation = 'SET_LOCATION',
+  setSearchedCity = 'SET_SEARCHED_CITY',
 }
 
 export type Location = {
@@ -75,6 +76,7 @@ export type WeatherState = {
   currentDay: CurrentWeather | null;
   fiveDaysForecast: FiveDaysForecast;
   location: Location | null;
+  searchedCity: string;
 };
 
 export type WeatherActions =
@@ -89,6 +91,10 @@ export type WeatherActions =
   | {
       type: ActionTypes.setLocation;
       location: Location | null;
+    }
+  | {
+      type: ActionTypes.setSearchedCity;
+      searchedCity: string;
     };
 
 export type RootStackParamList = {
