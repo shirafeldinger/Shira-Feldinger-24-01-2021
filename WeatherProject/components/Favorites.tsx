@@ -1,16 +1,39 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { Favorite, WeatherState } from "../types";
-import { Text, Card, Icon, Button } from 'react-native-elements';
+import { Text, Card, Icon } from 'react-native-elements';
+import { useTheme } from '@react-navigation/native';
 
 const Favorites = () => {
+    const { colors } = useTheme();
     const favorites = useSelector<WeatherState>(state => state.favorites) as Array<Favorite>
+
+    const styles = StyleSheet.create({
+        container: {
+            flex: 1,
+            alignItems: 'center',
+            justifyContent: 'center'
+        },
+        cardStyle: {
+            height: 150,
+            width: 100,
+            alignItems: 'center',
+            justifyContent: 'space-around',
+            backgroundColor: colors.background,
+            borderColor: colors.border,
+        },
+        textStyle: {
+            textAlign: 'center',
+            fontSize: 17,
+            color: colors.text
+        },
+    });
 
     return (
         <View style={styles.container}>
             <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-                <Text h1 >Favoriets</Text>
+                <Text h1 style={{ color: colors.text }} >Favoriets</Text>
             </View>
             <ScrollView horizontal={true}>
                 <View style={{ flexDirection: 'row' }}>
@@ -30,21 +53,3 @@ const Favorites = () => {
 };
 
 export default Favorites;
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center'
-    },
-    cardStyle: {
-        height: 150,
-        width: 100,
-        alignItems: 'center',
-        justifyContent: 'space-around'
-    },
-    textStyle: {
-        textAlign: 'center',
-        fontSize: 17
-    },
-});

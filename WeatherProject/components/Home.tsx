@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { ActionTypes, CurrentWeather, FiveDaysForecast, WeatherState, Location, Favorite } from "../types";
 import { demiCurrent, demiFive, demiLocal } from "../demiData";
 import Toast from 'react-native-toast-message';
+import { useTheme } from '@react-navigation/native';
 
 const Home = () => {
     const currentDay = useSelector<WeatherState>(state => state.currentDay) as CurrentWeather;
@@ -16,6 +17,44 @@ const Home = () => {
     const dispatch = useDispatch();
     const [input, setInput] = useState('')
     const [toggleFavorites, setToggleFavorites] = useState(false)
+    const { colors } = useTheme();
+
+
+    const styles = StyleSheet.create({
+        container: {
+            flex: 1,
+        },
+        inputStyle: {
+            borderColor: 'gray',
+            borderWidth: 1,
+            width: '50%',
+            alignSelf: 'center',
+            textAlign: 'center',
+            fontSize: 17
+        },
+
+        labelStyle: {
+            textTransform: 'capitalize',
+            textAlign: 'center',
+            color: colors.text
+        },
+        textStyle: {
+            textAlign: 'center',
+            fontSize: 17,
+            color: colors.text
+        },
+        imageStyle: {
+            width: 50,
+            height: 50,
+            alignSelf: 'center'
+        },
+        fiveDaysForecastView: {
+            flex: 1,
+            flexDirection: 'row',
+            alignItems: 'center',
+        },
+
+    });
 
     useEffect(() => {
         // allFetches()
@@ -123,8 +162,9 @@ const Home = () => {
                 <TextInput style={styles.inputStyle}
                     onChangeText={text => { text.replace(/[^A-Za-z]/ig, ''); setInput(text) }}
                     placeholder="Search City..."
+                    placeholderTextColor={colors.text}
                     value={input} />
-                <Button title='search' onPress={searchedValidation} />
+                <Button buttonStyle={{ height: 50 }} title='search' onPress={searchedValidation} />
             </View>
 
             <View style={{ flex: 1.5, justifyContent: 'space-around' }} >
@@ -156,7 +196,7 @@ const Home = () => {
                         const date = new Date(dailyForecast.Date).toString();
                         const spaceIndex = date.indexOf(' ')
                         return (
-                            <Card key={dailyForecast.Date}>
+                            <Card key={dailyForecast.Date} containerStyle={{ borderColor: colors.border, backgroundColor: colors.background }}>
                                 <Fragment>
                                     <Text h4 style={styles.textStyle}>{date.substr(0, spaceIndex)}</Text>
                                     <Image style={styles.imageStyle} source={require(`../resources/weather-icons/1.png`)} />
@@ -173,37 +213,3 @@ const Home = () => {
 };
 
 export default Home;
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-    },
-    inputStyle: {
-        borderColor: 'gray',
-        borderWidth: 1,
-        width: '50%',
-        alignSelf: 'center',
-        textAlign: 'center',
-        fontSize: 17
-    },
-
-    labelStyle: {
-        textTransform: 'capitalize',
-        textAlign: 'center',
-    },
-    textStyle: {
-        textAlign: 'center',
-        fontSize: 17,
-    },
-    imageStyle: {
-        width: 50,
-        height: 50,
-        alignSelf: 'center'
-    },
-    fiveDaysForecastView: {
-        flex: 1,
-        flexDirection: 'row',
-        alignItems: 'center',
-    },
-
-});
