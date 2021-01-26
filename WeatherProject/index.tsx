@@ -15,7 +15,8 @@ export const AppWrapper = () => {
     currentDay: null,
     fiveDaysForecast: { Headline: null, DailyForecasts: null },
     location: null,
-    searchedCity: 'Tel Aviv'
+    searchedCity: 'Tel Aviv',
+    favorites: []
   };
 
   const reducer = (state: WeatherState = initialState, action: WeatherActions): WeatherState => {
@@ -28,6 +29,8 @@ export const AppWrapper = () => {
         return { ...state, location: action.location }
       case ActionTypes.setSearchedCity:
         return { ...state, searchedCity: action.searchedCity }
+      case ActionTypes.setFavorites:
+        return { ...state, favorites: action.favorites }
       default:
         return state;
     };

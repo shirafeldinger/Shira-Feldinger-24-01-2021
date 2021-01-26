@@ -3,7 +3,7 @@ import { Image, StyleSheet, View } from "react-native";
 import { Text, Card, Icon, Button } from 'react-native-elements';
 import { ScrollView, TextInput } from "react-native-gesture-handler";
 import { useDispatch, useSelector } from "react-redux";
-import { ActionTypes, CurrentWeather, FiveDaysForecast, WeatherState, Location } from "../types";
+import { ActionTypes, CurrentWeather, FiveDaysForecast, WeatherState, Location, Favorite } from "../types";
 import { demiCurrent, demiFive, demiLocal } from "../demiData";
 import Toast from 'react-native-toast-message';
 
@@ -12,21 +12,12 @@ const Home = () => {
     const fiveDaysForecast = useSelector<WeatherState>(state => state.fiveDaysForecast) as FiveDaysForecast;
     const location = useSelector<WeatherState>(state => state.location) as Location;
     const searchedCity = useSelector<WeatherState>(state => state.searchedCity) as string;
+    const favorites = useSelector<WeatherState>(state => state.favorites) as Array<Favorite>
     const dispatch = useDispatch();
     const [input, setInput] = useState('')
-    const [err, setErr] = useState('')
 
     useEffect(() => {
         // allFetches()
-        Toast.show({
-            text1: 'Hello',
-            text2: 'This is some something 👋',
-            type: 'error',
-            visibilityTime: 4000,
-            autoHide: true,
-            topOffset: 30,
-            bottomOffset: 40,
-        });
     }, []);
 
     const allFetches = async () => {
@@ -44,14 +35,9 @@ const Home = () => {
                 dispatch({ type: ActionTypes.setLocation, location: data[0] });
             }
         } catch (err) {
-            console.error('Fetch location error', setErr(err))
+            console.log(err);
         };
     };
-    console.log(input);
-    console.log(searchedCity);
-    console.log(location);
-    console.log(err);
-
 
     const fetchCurrentWeather = async () => {
         const baseUrl = 'http://dataservice.accuweather.com/currentconditions/v1'
@@ -84,36 +70,56 @@ const Home = () => {
     const searchedValidation = () => {
         setInput('');
         if (input.length === 0) {
-            alert('Please enter a city name')
+            Toast.show({
+                text1: 'Please enter a city name',
+                type: 'error',
+                visibilityTime: 3000,
+                autoHide: true,
+                position: 'bottom'
+            });
             return;
         };
-        if (err) {
-            alert(err)
-        }
         dispatch({ type: ActionTypes.setSearchedCity, searchedCity: input });
-    }
+    };
+
+    const handleAddToFavorites = () => {
+        let newFavorites: Array<Favorite> = [...favorites];
+        newFavorites.push({ temperatureValue: demiCurrent.Temperature.Metric.Value, temperatureUnit: demiCurrent.Temperature.Metric.Unit, currentWeather: demiCurrent.WeatherText, id: demiLocal.Key, name: demiLocal.LocalizedName });
+        dispatch({ type: ActionTypes.setFavorites, favorites: newFavorites })
+    };
+
+
 
     return (
         <View style={styles.container}>
-            <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', flexDirection: 'row' }} >
+
+            <View style={{ flex: 0.5, alignItems: 'center', justifyContent: 'center', flexDirection: 'row' }} >
                 <TextInput style={styles.inputStyle}
                     onChangeText={text => { text.replace(/[^A-Za-z]/ig, ''); setInput(text) }}
                     placeholder="Search City..."
                     value={input} />
                 <Button title='search' onPress={searchedValidation} />
             </View>
-            <View style={{ flex: 2, justifyContent: 'space-around' }} >
+
+            <View style={{ flex: 1.5, justifyContent: 'space-around' }} >
                 <View style={{ alignItems: 'center', justifyContent: 'center' }}>
                     <Text h3 style={styles.labelStyle}>Current Weather:</Text>
                     <Text style={styles.textStyle}>{demiLocal.LocalizedName}</Text>
                     <Text style={styles.textStyle}>{demiCurrent.WeatherText}</Text>
                     <Text style={styles.textStyle}>{`${demiCurrent.Temperature.Metric.Value}°${demiCurrent.Temperature.Metric.Unit}`}</Text>
                 </View>
+
+                <View style={{ alignItems: 'center' }}>
+                    <Button title='add to favoriets' onPress={handleAddToFavorites} />
+                </View>
+
                 <View style={{ alignItems: 'center', justifyContent: 'center' }}>
                     <Text h3 style={styles.labelStyle} > next 5 day forecast:</Text>
                     <Text style={styles.textStyle}>{demiFive?.Headline?.Text}</Text>
                 </View>
+
             </View>
+
             <ScrollView style={{ flex: 1 }} horizontal={true}>
                 <View style={styles.fiveDaysForecastView}>
                     {demiFive?.DailyForecasts?.map(dailyForecast => {
@@ -121,7 +127,7 @@ const Home = () => {
                         const date = new Date(dailyForecast.Date).toString();
                         const spaceIndex = date.indexOf(' ')
                         return (
-                            <Card key={dailyForecast.Date} >
+                            <Card key={dailyForecast.Date}>
                                 <Fragment>
                                     <Text h4 style={styles.textStyle}>{date.substr(0, spaceIndex)}</Text>
                                     <Image style={styles.imageStyle} source={require(`../resources/weather-icons/1.png`)} />

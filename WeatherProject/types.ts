@@ -5,7 +5,6 @@ export interface Temperature {
   UnitType: number;
   Value: number;
 }
-
 export interface CurrentWeather {
   EpochTime?: number;
   HasPrecipitation?: boolean;
@@ -60,6 +59,7 @@ export enum ActionTypes {
   setFiveDaysForecast = 'SET_FIVE_DAYS_FORECAST',
   setLocation = 'SET_LOCATION',
   setSearchedCity = 'SET_SEARCHED_CITY',
+  setFavorites = 'SET_FAVORITES',
 }
 
 export type Location = {
@@ -77,6 +77,7 @@ export type WeatherState = {
   fiveDaysForecast: FiveDaysForecast;
   location: Location | null;
   searchedCity: string;
+  favorites: Array<Favorite>;
 };
 
 export type WeatherActions =
@@ -95,11 +96,15 @@ export type WeatherActions =
   | {
       type: ActionTypes.setSearchedCity;
       searchedCity: string;
+    }
+  | {
+      type: ActionTypes.setFavorites;
+      favorites: Array<Favorite>;
     };
 
 export type RootStackParamList = {
   Home: undefined;
-  Favoriets: undefined;
+  Favorites: undefined;
 };
 
 export type ProfileScreenNavigationProp = StackNavigationProp<
@@ -109,4 +114,12 @@ export type ProfileScreenNavigationProp = StackNavigationProp<
 
 export type NavigationProps = {
   navigation: ProfileScreenNavigationProp;
+};
+
+export type Favorite = {
+  currentWeather: string;
+  id: string;
+  name: string;
+  temperatureValue: number;
+  temperatureUnit: string;
 };

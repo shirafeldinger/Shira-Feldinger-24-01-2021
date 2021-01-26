@@ -6,12 +6,13 @@ import { createStackNavigator } from '@react-navigation/stack';
 import Favorites from "./components/Favorites";
 import { ButtonGroup } from "react-native-elements";
 import Toast from 'react-native-toast-message';
+import { View, Text } from "react-native";
 
 
 const RootStack = createStackNavigator<RootStackParamList>();
 const App = () => {
   const [selectedIndex, setSelectedIndex] = useState(2)
-  const buttons = ['Favoriets', 'Home']
+  const buttons = ['Favorites', 'Home'];
   return (
     <NavigationContainer>
       <RootStack.Navigator initialRouteName="Home" screenOptions={({ navigation }) => ({
@@ -25,7 +26,7 @@ const App = () => {
         )
       })}>
         <RootStack.Screen name="Home" component={Home} />
-        <RootStack.Screen name="Favoriets" component={Favorites} />
+        <RootStack.Screen name="Favorites" component={Favorites} />
 
       </RootStack.Navigator>
       <Toast ref={(ref) => Toast.setRef(ref)} />
