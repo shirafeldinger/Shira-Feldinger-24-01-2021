@@ -1,11 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { Image, StyleSheet, Text, View } from "react-native";
+import { ButtonGroup, Card, Icon } from 'react-native-elements';
 import { ScrollView, TextInput } from "react-native-gesture-handler";
 import { useDispatch, useSelector } from "react-redux";
 import { ActionTypes, CurrentWeather, FiveDaysForecast, WeatherState, Location } from "../types";
 import { demiCurrent, demiFive, demiLocal } from "../demiData"
+import Favorites from "./Favorites";
 
-const Home = () => {
+const Home = ({ navigation }) => {
     const currentDay = useSelector<WeatherState>(state => state.currentDay) as CurrentWeather;
     const fiveDaysForecast = useSelector<WeatherState>(state => state.fiveDaysForecast) as FiveDaysForecast;
     const location = useSelector<WeatherState>(state => state.location) as Location;
@@ -65,6 +67,8 @@ const Home = () => {
         };
     };
 
+    const buttons = ['home', 'Favorites']
+
     return (
         <View style={styles.container}>
             <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }} >
@@ -91,16 +95,20 @@ const Home = () => {
                         const date = new Date(dailyForecast.Date).toString();
                         const spaceIndex = date.indexOf(' ')
                         return (
-                            <View key={dailyForecast.Date} style={styles.dailyForecastView}>
-                                <Text style={styles.textStyle}>{date.substr(0, spaceIndex)}</Text>
-                                <Image style={styles.imageStyle} source={require(`../resources/weather-icons/1.png`)} />
-                                <Text>{`Max: ${dailyForecast?.Temperature?.Maximum.Value}°${dailyForecast?.Temperature?.Maximum.Unit}`}</Text>
-                                <Text>{`Min: ${dailyForecast?.Temperature?.Minimum.Value}°${dailyForecast?.Temperature?.Minimum.Unit}`}</Text>
-                            </View>
+                            <Card key={dailyForecast.Date} >
+                                <Fragment>
+                                    <Text style={styles.textStyle}>{date.substr(0, spaceIndex)}</Text>
+                                    <Image style={styles.imageStyle} source={require(`../resources/weather-icons/1.png`)} />
+                                    <Text>{`Max: ${dailyForecast?.Temperature?.Maximum.Value}°${dailyForecast?.Temperature?.Maximum.Unit}`}</Text>
+                                    <Text>{`Min: ${dailyForecast?.Temperature?.Minimum.Value}°${dailyForecast?.Temperature?.Minimum.Unit}`}</Text>
+                                </Fragment>
+                            </Card>
                         )
                     })}
                 </View>
             </ScrollView>
+
+            <ButtonGroup onPress={() => { navigation.navigate('Favoriets') }} buttons={buttons} />
         </View >
     );
 };
@@ -139,12 +147,6 @@ const styles = StyleSheet.create({
         flex: 1,
         flexDirection: 'row',
         alignItems: 'center',
-    },
-    dailyForecastView: {
-        borderColor: 'black',
-        borderWidth: 1,
-        padding: 20,
-        margin: 10,
     },
 
 });
