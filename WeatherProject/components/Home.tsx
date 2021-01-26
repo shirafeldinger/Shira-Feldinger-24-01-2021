@@ -82,14 +82,33 @@ const Home = () => {
         dispatch({ type: ActionTypes.setSearchedCity, searchedCity: input });
     };
 
-    const handleAddToFavorites = () => {
+    const handleFavorites = () => {
         let newFavorites: Array<Favorite> = [...favorites];
-        newFavorites.push({ temperatureValue: currentDay.Temperature.Metric.Value, temperatureUnit: currentDay.Temperature.Metric.Unit, currentWeather: currentDay.WeatherText, id: demiLocal.Key, name: location.LocalizedName });
-        dispatch({ type: ActionTypes.setFavorites, favorites: newFavorites })
+        if (newFavorites.length > 0) {
+
+            newFavorites.forEach((favorite: Favorite) => {
+                if (favorite.name == demiLocal.LocalizedName) {
+                    const removeFavorites = newFavorites.filter(favorite => favorite.name !== demiLocal.LocalizedName)
+                    dispatch({ type: ActionTypes.setFavorites, favorites: removeFavorites })
+                } else {
+                    newFavorites.push({
+                        temperatureValue: demiCurrent.Temperature.Metric.Value, temperatureUnit: demiCurrent.Temperature.Metric.Unit,
+                        currentWeather: demiCurrent.WeatherText, id: demiLocal.Key, name: demiLocal.LocalizedName
+                    });
+                    dispatch({ type: ActionTypes.setFavorites, favorites: newFavorites })
+                }
+            });
+        } else {
+            newFavorites.push({
+                temperatureValue: demiCurrent.Temperature.Metric.Value, temperatureUnit: demiCurrent.Temperature.Metric.Unit,
+                currentWeather: demiCurrent.WeatherText, id: demiLocal.Key, name: demiLocal.LocalizedName
+            });
+            dispatch({ type: ActionTypes.setFavorites, favorites: newFavorites })
+        }
+
     };
 
-    console.log(currentDay, 'current');
-    console.log(location, 'location');
+    console.log(favorites);
 
 
 
@@ -108,25 +127,25 @@ const Home = () => {
             <View style={{ flex: 1.5, justifyContent: 'space-around' }} >
                 <View style={{ alignItems: 'center', justifyContent: 'center' }}>
                     <Text h3 style={styles.labelStyle}>Current Weather:</Text>
-                    <Text style={styles.textStyle}>{location.LocalizedName}</Text>
-                    <Text style={styles.textStyle}>{currentDay.WeatherText}</Text>
-                    <Text style={styles.textStyle}>{`${currentDay.Temperature.Metric.Value}°${currentDay.Temperature.Metric.Unit}`}</Text>
+                    <Text style={styles.textStyle}>{demiLocal.LocalizedName}</Text>
+                    <Text style={styles.textStyle}>{demiCurrent.WeatherText}</Text>
+                    <Text style={styles.textStyle}>{`${demiCurrent.Temperature.Metric.Value}°${demiCurrent.Temperature.Metric.Unit}`}</Text>
                 </View>
 
                 <View style={{ alignItems: 'center' }}>
-                    <Button title='add to favoriets' onPress={handleAddToFavorites} />
+                    <Button title='add to favoriets' onPress={handleFavorites} />
                 </View>
 
                 <View style={{ alignItems: 'center', justifyContent: 'center' }}>
                     <Text h3 style={styles.labelStyle} > next 5 day forecast:</Text>
-                    <Text style={styles.textStyle}>{fiveDaysForecast?.Headline?.Text}</Text>
+                    <Text style={[styles.textStyle, { width: '90%' }]}>{demiFive?.Headline?.Text}</Text>
                 </View>
 
             </View>
 
             <ScrollView style={{ flex: 1 }} horizontal={true}>
                 <View style={styles.fiveDaysForecastView}>
-                    {fiveDaysForecast?.DailyForecasts?.map(dailyForecast => {
+                    {demiFive?.DailyForecasts?.map(dailyForecast => {
                         // console.log(dailyForecast.Day.Icon.toString());
                         const date = new Date(dailyForecast.Date).toString();
                         const spaceIndex = date.indexOf(' ')
@@ -168,7 +187,7 @@ const styles = StyleSheet.create({
     },
     textStyle: {
         textAlign: 'center',
-        fontSize: 20
+        fontSize: 17,
     },
     imageStyle: {
         width: 50,
