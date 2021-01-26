@@ -15,6 +15,7 @@ const Home = () => {
     const favorites = useSelector<WeatherState>(state => state.favorites) as Array<Favorite>
     const dispatch = useDispatch();
     const [input, setInput] = useState('')
+    const [toggleFavorites, setToggleFavorites] = useState(false)
 
     useEffect(() => {
         // allFetches()
@@ -85,16 +86,17 @@ const Home = () => {
     const handleFavorites = () => {
         let newFavorites: Array<Favorite> = [...favorites];
         if (newFavorites.length > 0) {
-
             newFavorites.forEach((favorite: Favorite) => {
                 if (favorite.name == demiLocal.LocalizedName) {
                     const removeFavorites = newFavorites.filter(favorite => favorite.name !== demiLocal.LocalizedName)
+                    setToggleFavorites(false)
                     dispatch({ type: ActionTypes.setFavorites, favorites: removeFavorites })
                 } else {
                     newFavorites.push({
                         temperatureValue: demiCurrent.Temperature.Metric.Value, temperatureUnit: demiCurrent.Temperature.Metric.Unit,
                         currentWeather: demiCurrent.WeatherText, id: demiLocal.Key, name: demiLocal.LocalizedName
                     });
+                    setToggleFavorites(true)
                     dispatch({ type: ActionTypes.setFavorites, favorites: newFavorites })
                 }
             });
@@ -103,6 +105,7 @@ const Home = () => {
                 temperatureValue: demiCurrent.Temperature.Metric.Value, temperatureUnit: demiCurrent.Temperature.Metric.Unit,
                 currentWeather: demiCurrent.WeatherText, id: demiLocal.Key, name: demiLocal.LocalizedName
             });
+            setToggleFavorites(true)
             dispatch({ type: ActionTypes.setFavorites, favorites: newFavorites })
         }
 
@@ -126,6 +129,9 @@ const Home = () => {
 
             <View style={{ flex: 1.5, justifyContent: 'space-around' }} >
                 <View style={{ alignItems: 'center', justifyContent: 'center' }}>
+                    {toggleFavorites ?
+                        <Icon name='heart' type='evilicon' color='#f50'></Icon> : null
+                    }
                     <Text h3 style={styles.labelStyle}>Current Weather:</Text>
                     <Text style={styles.textStyle}>{demiLocal.LocalizedName}</Text>
                     <Text style={styles.textStyle}>{demiCurrent.WeatherText}</Text>
@@ -133,7 +139,7 @@ const Home = () => {
                 </View>
 
                 <View style={{ alignItems: 'center' }}>
-                    <Button title='add to favoriets' onPress={handleFavorites} />
+                    <Button title={toggleFavorites ? 'remove from favoriets' : 'add to favoriets'} onPress={handleFavorites} />
                 </View>
 
                 <View style={{ alignItems: 'center', justifyContent: 'center' }}>
