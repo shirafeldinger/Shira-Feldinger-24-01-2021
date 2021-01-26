@@ -18,6 +18,15 @@ const Home = () => {
 
     useEffect(() => {
         // allFetches()
+        Toast.show({
+            text1: 'Hello',
+            text2: 'This is some something 👋',
+            type: 'error',
+            visibilityTime: 4000,
+            autoHide: true,
+            topOffset: 30,
+            bottomOffset: 40,
+        });
     }, []);
 
     const allFetches = async () => {
