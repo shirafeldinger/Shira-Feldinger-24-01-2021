@@ -1,13 +1,12 @@
 import React, { Fragment, useEffect, useState } from "react";
-import { Image, StyleSheet, Text, View } from "react-native";
-import { ButtonGroup, Card, Icon } from 'react-native-elements';
+import { Image, StyleSheet, View } from "react-native";
+import { Text, Card, Icon } from 'react-native-elements';
 import { ScrollView, TextInput } from "react-native-gesture-handler";
 import { useDispatch, useSelector } from "react-redux";
 import { ActionTypes, CurrentWeather, FiveDaysForecast, WeatherState, Location } from "../types";
 import { demiCurrent, demiFive, demiLocal } from "../demiData"
-import Favorites from "./Favorites";
 
-const Home = ({ navigation }) => {
+const Home = () => {
     const currentDay = useSelector<WeatherState>(state => state.currentDay) as CurrentWeather;
     const fiveDaysForecast = useSelector<WeatherState>(state => state.fiveDaysForecast) as FiveDaysForecast;
     const location = useSelector<WeatherState>(state => state.location) as Location;
@@ -74,17 +73,18 @@ const Home = ({ navigation }) => {
             <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }} >
                 <TextInput style={styles.inputStyle}
                     onChangeText={text => setInput(text)}
+                    placeholder="Search City..."
                     value={input} />
             </View>
-            <View style={{ flex: 2, justifyContent: 'space-between' }} >
+            <View style={{ flex: 2.5, justifyContent: 'space-between' }} >
                 <View style={{ alignItems: 'center', justifyContent: 'center' }}>
-                    <Text style={styles.labelStyle}>Current Weather:</Text>
+                    <Text h3 style={styles.labelStyle}>Current Weather:</Text>
                     <Text style={styles.textStyle}>{demiLocal.LocalizedName}</Text>
                     <Text style={styles.textStyle}>{demiCurrent.WeatherText}</Text>
                     <Text style={styles.textStyle}>{`${demiCurrent.Temperature.Metric.Value}°${demiCurrent.Temperature.Metric.Unit}`}</Text>
                 </View>
                 <View style={{ alignItems: 'center', justifyContent: 'center' }}>
-                    <Text style={styles.labelStyle} > next 5 day forecast:</Text>
+                    <Text h3 style={styles.labelStyle} > next 5 day forecast:</Text>
                     <Text style={styles.textStyle}>{demiFive?.Headline?.Text}</Text>
                 </View>
             </View>
@@ -97,18 +97,16 @@ const Home = ({ navigation }) => {
                         return (
                             <Card key={dailyForecast.Date} >
                                 <Fragment>
-                                    <Text style={styles.textStyle}>{date.substr(0, spaceIndex)}</Text>
+                                    <Text h4 style={styles.textStyle}>{date.substr(0, spaceIndex)}</Text>
                                     <Image style={styles.imageStyle} source={require(`../resources/weather-icons/1.png`)} />
-                                    <Text>{`Max: ${dailyForecast?.Temperature?.Maximum.Value}°${dailyForecast?.Temperature?.Maximum.Unit}`}</Text>
-                                    <Text>{`Min: ${dailyForecast?.Temperature?.Minimum.Value}°${dailyForecast?.Temperature?.Minimum.Unit}`}</Text>
+                                    <Text style={styles.textStyle} >{`Max: ${dailyForecast?.Temperature?.Maximum.Value}°${dailyForecast?.Temperature?.Maximum.Unit}`}</Text>
+                                    <Text style={styles.textStyle} >{`Min: ${dailyForecast?.Temperature?.Minimum.Value}°${dailyForecast?.Temperature?.Minimum.Unit}`}</Text>
                                 </Fragment>
                             </Card>
                         )
                     })}
                 </View>
             </ScrollView>
-
-            <ButtonGroup onPress={() => { navigation.navigate('Favoriets') }} buttons={buttons} />
         </View >
     );
 };
@@ -129,14 +127,12 @@ const styles = StyleSheet.create({
     },
 
     labelStyle: {
-        fontSize: 23,
         textTransform: 'capitalize',
         textAlign: 'center',
-        fontWeight: 'bold',
     },
     textStyle: {
-        fontSize: 18,
         textAlign: 'center',
+        fontSize: 20
     },
     imageStyle: {
         width: 50,
