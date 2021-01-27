@@ -60,7 +60,13 @@ const Home = () => {
 
     useEffect(() => {
         // allFetches()
+        console.log('here');
+
     }, []);
+
+    console.log(currentDay);
+    console.log(location);
+
 
     const allFetches = async () => {
         await fetchLocation()
@@ -175,22 +181,24 @@ const Home = () => {
                     placeholder="Search City..."
                     placeholderTextColor={colors.text}
                     value={input} />
-                <Button buttonStyle={{ height: 50 }} title='search' onPress={searchedValidation} />
+                <Button buttonStyle={{ height: 52 }} title='search' onPress={searchedValidation} />
             </View>
 
-            <View style={{ flex: 1.5, justifyContent: 'space-around' }} >
+            <View style={{ flex: 1.7, justifyContent: 'space-around' }} >
                 <View style={{ alignItems: 'center', justifyContent: 'center' }}>
-                    {toggleFavorites ?
-                        <Icon name='heart' type='evilicon' color='#f50'></Icon> : null
-                    }
+                    <Button title={`°${toggleTempUnit}`} onPress={() => toggleTempUnits(toggleTempUnit)} />
+
                     <Text h3 style={styles.labelStyle}>Current Weather:</Text>
+                    {toggleFavorites ?
+                        <Icon containerStyle={{ marginHorizontal: 5 }} name='heart' type='evilicon' color='#f50'></Icon> : null
+                    }
                     <Text style={styles.textStyle}>{demiLocal.LocalizedName}</Text>
                     <Text style={styles.textStyle}>{demiCurrent.WeatherText}</Text>
                     <Text style={styles.textStyle}>{`${toggleTempValue}°${toggleTempUnit}`}</Text>
                 </View>
 
                 <View style={{ alignItems: 'center' }}>
-                    <Button title={toggleFavorites ? 'remove from favoriets' : 'add to favoriets'} onPress={handleFavorites} />
+                    <Button title={toggleFavorites ? 'remove from favorites' : 'add to favorites'} onPress={handleFavorites} />
                 </View>
 
                 <View style={{ alignItems: 'center', justifyContent: 'center' }}>
@@ -199,7 +207,6 @@ const Home = () => {
                 </View>
 
             </View>
-            <Button title='temp' onPress={() => toggleTempUnits(toggleTempUnit)} />
 
             <ScrollView style={{ flex: 1 }} horizontal={true}>
                 <View style={styles.fiveDaysForecastView}>
