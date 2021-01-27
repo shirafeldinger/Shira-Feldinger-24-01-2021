@@ -18,6 +18,8 @@ const Home = () => {
     const [input, setInput] = useState('')
     const [toggleFavorites, setToggleFavorites] = useState(false)
     const { colors } = useTheme();
+    const [toggleTempValue, setToggleTempValue] = useState(demiCurrent.Temperature.Imperical.Value)
+    const [toggleTempUnit, setToggleTempUnit] = useState(demiCurrent.Temperature.Imperical.Unit)
 
 
     const styles = StyleSheet.create({
@@ -150,11 +152,20 @@ const Home = () => {
 
     };
 
-    console.log(favorites);
+    const toggleTempUnits = (unit: string) => {
+        let newValue = toggleTempValue;
+        let newUnit = toggleTempUnit;
+        if (unit == 'F') {
+            newValue = Math.round((newValue * (9 / 5)) + 32)
+            newUnit = 'C'
 
-
-
-
+        } else {
+            newValue = Math.round((newValue - 32) * (5 / 9))
+            newUnit = 'F'
+        }
+        setToggleTempValue(newValue)
+        setToggleTempUnit(newUnit)
+    };
     return (
         <View style={styles.container}>
 
@@ -175,7 +186,7 @@ const Home = () => {
                     <Text h3 style={styles.labelStyle}>Current Weather:</Text>
                     <Text style={styles.textStyle}>{demiLocal.LocalizedName}</Text>
                     <Text style={styles.textStyle}>{demiCurrent.WeatherText}</Text>
-                    <Text style={styles.textStyle}>{`${demiCurrent.Temperature.Metric.Value}°${demiCurrent.Temperature.Metric.Unit}`}</Text>
+                    <Text style={styles.textStyle}>{`${toggleTempValue}°${toggleTempUnit}`}</Text>
                 </View>
 
                 <View style={{ alignItems: 'center' }}>
@@ -188,6 +199,7 @@ const Home = () => {
                 </View>
 
             </View>
+            <Button title='temp' onPress={() => toggleTempUnits(toggleTempUnit)} />
 
             <ScrollView style={{ flex: 1 }} horizontal={true}>
                 <View style={styles.fiveDaysForecastView}>
@@ -200,8 +212,8 @@ const Home = () => {
                                 <Fragment>
                                     <Text h4 style={styles.textStyle}>{date.substr(0, spaceIndex)}</Text>
                                     <Image style={styles.imageStyle} source={require(`../resources/weather-icons/1.png`)} />
-                                    <Text style={styles.textStyle} >{`Max: ${dailyForecast?.Temperature?.Maximum.Value}°${dailyForecast?.Temperature?.Maximum.Unit}`}</Text>
-                                    <Text style={styles.textStyle} >{`Min: ${dailyForecast?.Temperature?.Minimum.Value}°${dailyForecast?.Temperature?.Minimum.Unit}`}</Text>
+                                    <Text style={styles.textStyle} >{`Max: ${dailyForecast?.Temperature?.Maximum.Value}°${toggleTempUnit}`}</Text>
+                                    <Text style={styles.textStyle} >{`Min: ${dailyForecast?.Temperature?.Minimum.Value}°${toggleTempUnit}`}</Text>
                                 </Fragment>
                             </Card>
                         )
