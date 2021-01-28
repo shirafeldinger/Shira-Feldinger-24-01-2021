@@ -165,8 +165,10 @@ const Home = () => {
         console.log(favorites, 'end');
     };
 
-    const toggleTempUnits = (unit: string) => {
-        let newValue = toggleTempValue;
+    const toggleTempUnits = (unit: string, tempValue: number, current: boolean) => {
+        let newValue = tempValue;
+        console.log(tempValue);
+
         let newUnit = toggleTempUnit;
         if (unit == 'C') {
             newValue = Math.round((newValue * (9 / 5)) + 32)
@@ -176,8 +178,11 @@ const Home = () => {
             newValue = Math.round((newValue - 32) * (5 / 9))
             newUnit = 'C'
         }
-        setToggleTempValue(newValue)
+        if (current) {
+            setToggleTempValue(newValue)
+        }
         setToggleTempUnit(newUnit)
+
     };
     return (
         // (loading ? <Text>loading</Text> :
@@ -193,7 +198,7 @@ const Home = () => {
 
             <View style={{ flex: 1.7, justifyContent: 'space-around' }} >
                 <View style={{ alignItems: 'center', justifyContent: 'center' }}>
-                    <Button title={`°${toggleTempUnit}`} onPress={() => toggleTempUnits(toggleTempUnit)} />
+                    <Button title={`°${toggleTempUnit}`} onPress={() => toggleTempUnits(toggleTempUnit, toggleTempValue, true)} />
 
                     <Text h3 style={styles.labelStyle}>Current Weather:</Text>
                     {favorites.some(favorite => favorite.name == demiLocal.LocalizedName) ?
