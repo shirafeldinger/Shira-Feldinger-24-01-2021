@@ -18,7 +18,8 @@ const Home = () => {
     const dispatch = useDispatch();
     const [input, setInput] = useState('')
     const { colors } = useTheme();
-    const [toggleTempValue, setToggleTempValue] = useState(0)
+    const [currentToggleTempValue, setCurrentToggleTempValue] = useState(0)
+    const [fiveToggleTempValue, setFiveToggleTempValue] = useState(0)
     const [toggleTempUnit, setToggleTempUnit] = useState('F')
     const [loading, setLoading] = useState(true);
 
@@ -33,7 +34,7 @@ const Home = () => {
             width: '50%',
             alignSelf: 'center',
             textAlign: 'center',
-            fontSize: 17
+            fontSize: 17,
         },
 
         labelStyle: {
@@ -71,7 +72,8 @@ const Home = () => {
     // }, [searchedCity, favorites]);
 
     useEffect(() => {
-        setToggleTempValue(demiCurrent.Temperature.Imperical.Value)
+        setCurrentToggleTempValue(demiCurrent.Temperature.Imperical.Value)
+        setFiveToggleTempValue(59)
     }, [])
 
     const fetchLocation = async (): Promise<string> => {
@@ -137,8 +139,6 @@ const Home = () => {
         dispatch({ type: ActionTypes.setSearchedCity, searchedCity: input });
     };
 
-    console.log(favorites, 'out');
-
     const handleFavorites = () => {
         console.log(favorites, 'start');
         let newFavorites: Array<Favorite> = [...favorites];
@@ -165,10 +165,9 @@ const Home = () => {
         console.log(favorites, 'end');
     };
 
-    const toggleTempUnits = (unit: string, tempValue: number, current: boolean) => {
-        let newValue = tempValue;
+    const toggleTempUnits = (unit: string, tempValue: number, currentDay: boolean) => {
         console.log(tempValue);
-
+        let newValue = tempValue;
         let newUnit = toggleTempUnit;
         if (unit == 'C') {
             newValue = Math.round((newValue * (9 / 5)) + 32)
@@ -178,9 +177,7 @@ const Home = () => {
             newValue = Math.round((newValue - 32) * (5 / 9))
             newUnit = 'C'
         }
-        if (current) {
-            setToggleTempValue(newValue)
-        }
+        currentDay ? setCurrentToggleTempValue(newValue) : setFiveToggleTempValue(newValue)
         setToggleTempUnit(newUnit)
 
     };
@@ -198,7 +195,7 @@ const Home = () => {
 
             <View style={{ flex: 1.7, justifyContent: 'space-around' }} >
                 <View style={{ alignItems: 'center', justifyContent: 'center' }}>
-                    <Button title={`°${toggleTempUnit}`} onPress={() => toggleTempUnits(toggleTempUnit, toggleTempValue, true)} />
+                    <Button title={`°${toggleTempUnit}`} onPress={() => toggleTempUnits(toggleTempUnit, currentToggleTempValue, true)} />
 
                     <Text h3 style={styles.labelStyle}>Current Weather:</Text>
                     {favorites.some(favorite => favorite.name == demiLocal.LocalizedName) ?
@@ -206,7 +203,7 @@ const Home = () => {
                     }
                     <Text style={styles.textStyle}>{demiLocal.LocalizedName}</Text>
                     <Text style={styles.textStyle}>{demiCurrent.WeatherText}</Text>
-                    <Text style={styles.textStyle}>{`${toggleTempValue}°${toggleTempUnit}`}</Text>
+                    <Text style={styles.textStyle}>{`${currentToggleTempValue}°${toggleTempUnit}`}</Text>
                 </View>
 
                 <View style={{ alignItems: 'center' }}>
@@ -231,8 +228,9 @@ const Home = () => {
                                 <Fragment>
                                     <Text h4 style={styles.textStyle}>{date.substr(0, spaceIndex)}</Text>
                                     <Image style={styles.imageStyle} source={require(`../resources/weather-icons/1.png`)} />
-                                    <Text style={styles.textStyle} >{`Max: ${dailyForecast?.Temperature?.Maximum.Value}°${toggleTempUnit}`}</Text>
+                                    <Text style={styles.textStyle} >{`Max: ${fiveToggleTempValue}°${toggleTempUnit}`}</Text>
                                     <Text style={styles.textStyle} >{`Min: ${dailyForecast?.Temperature?.Minimum.Value}°${toggleTempUnit}`}</Text>
+                                    <Button title={`°${toggleTempUnit}`} onPress={() => toggleTempUnits(toggleTempUnit, fiveToggleTempValue, false)} />
                                 </Fragment>
                             </Card>
                         )
