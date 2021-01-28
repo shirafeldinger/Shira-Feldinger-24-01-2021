@@ -17,7 +17,6 @@ const Home = () => {
     const favorites = useSelector<WeatherState>(state => state.favorites) as Array<Favorite>
     const dispatch = useDispatch();
     const [input, setInput] = useState('')
-    const [toggleFavorites, setToggleFavorites] = useState(false)
     const { colors } = useTheme();
     const [toggleTempValue, setToggleTempValue] = useState(0)
     const [toggleTempUnit, setToggleTempUnit] = useState('F')
@@ -69,7 +68,7 @@ const Home = () => {
         }).catch(error => {
             console.log(error);
         });
-    }, []);
+    }, [searchedCity, favorites]);
 
     const fetchLocation = async (): Promise<string> => {
         const baseUrl = 'http://dataservice.accuweather.com/locations/v1/cities/autocomplete'
@@ -121,7 +120,6 @@ const Home = () => {
 
     const searchedValidation = () => {
         setInput('');
-        handleFavorites()
         if (input.length === 0) {
             Toast.show({
                 text1: 'Please enter a city name',
@@ -135,20 +133,21 @@ const Home = () => {
         dispatch({ type: ActionTypes.setSearchedCity, searchedCity: input });
     };
 
+    console.log(favorites, 'out');
+
     const handleFavorites = () => {
+        console.log(favorites, 'start');
         let newFavorites: Array<Favorite> = [...favorites];
         if (newFavorites.length > 0) {
             newFavorites.forEach((favorite: Favorite) => {
                 if (favorite.name == location.LocalizedName) {
                     const removeFavorites = newFavorites.filter(favorite => favorite.name !== location.LocalizedName)
-                    setToggleFavorites(false)
                     dispatch({ type: ActionTypes.setFavorites, favorites: removeFavorites })
                 } else {
                     newFavorites.push({
                         temperatureValue: currentDay.Temperature.Metric.Value, temperatureUnit: currentDay.Temperature.Metric.Unit,
                         currentWeather: currentDay.WeatherText, id: location.Key, name: location.LocalizedName
                     });
-                    setToggleFavorites(true)
                     dispatch({ type: ActionTypes.setFavorites, favorites: newFavorites })
                 }
             });
@@ -157,10 +156,9 @@ const Home = () => {
                 temperatureValue: currentDay.Temperature.Metric.Value, temperatureUnit: currentDay.Temperature.Metric.Unit,
                 currentWeather: currentDay.WeatherText, id: location.Key, name: location.LocalizedName
             });
-            setToggleFavorites(true)
             dispatch({ type: ActionTypes.setFavorites, favorites: newFavorites })
-        }
-
+        };
+        console.log(favorites, 'end');
     };
 
     const toggleTempUnits = (unit: string) => {
@@ -194,7 +192,7 @@ const Home = () => {
                         <Button title={`°${toggleTempUnit}`} onPress={() => toggleTempUnits(toggleTempUnit)} />
 
                         <Text h3 style={styles.labelStyle}>Current Weather:</Text>
-                        {toggleFavorites ?
+                        {favorites.some(favorite => favorite.name == location.LocalizedName) ?
                             <EvilIcon style={{ marginHorizontal: 5 }} name='heart' color='#f50' size={25}></EvilIcon> : null
                         }
                         <Text style={styles.textStyle}>{location.LocalizedName}</Text>
@@ -203,7 +201,7 @@ const Home = () => {
                     </View>
 
                     <View style={{ alignItems: 'center' }}>
-                        <Button title={toggleFavorites ? 'remove from favorites' : 'add to favorites'} onPress={handleFavorites} />
+                        <Button title={favorites.some(favorite => favorite.name == location.LocalizedName) ? 'remove from favorites' : 'add to favorites'} onPress={handleFavorites} />
                     </View>
 
                     <View style={{ alignItems: 'center', justifyContent: 'center' }}>
