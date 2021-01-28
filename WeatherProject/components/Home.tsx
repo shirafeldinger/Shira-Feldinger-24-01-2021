@@ -7,6 +7,7 @@ import { ActionTypes, CurrentWeather, FiveDaysForecast, WeatherState, Location, 
 import { demiCurrent, demiFive, demiLocal } from "../demiData";
 import Toast from 'react-native-toast-message';
 import { useTheme } from '@react-navigation/native';
+import { default as EvilIcon } from 'react-native-vector-icons/EvilIcons';
 
 const Home = () => {
     const currentDay = useSelector<WeatherState>(state => state.currentDay) as CurrentWeather;
@@ -60,59 +61,62 @@ const Home = () => {
     });
 
     useEffect(() => {
-        async () => {
-            try {
-                setLoading(true);
-                await fetchLocation()
-                await fetchCurrentWeather()
-                await fiveDaysForecasts()
-                setLoading(false);
-            } catch (error) {
-                console.log(error);
-            }
-
-        };
-
+        setLoading(true);
+        fetchLocation().then((key: string) => {
+            Promise.all([fetchCurrentWeather(key), fiveDaysForecasts(key)]).then(() => {
+                setLoading(false)
+            });
+        }).catch(error => {
+            console.log(error);
+        });
     }, []);
 
-    const fetchLocation = async () => {
+    const fetchLocation = async (): Promise<string> => {
         const baseUrl = 'http://dataservice.accuweather.com/locations/v1/cities/autocomplete'
         try {
             const res = await fetch(`${baseUrl}?apikey=AajKuPVPSQaHeVqfDiMiscjqoUbACFMx&q=${searchedCity}`)
             const data = await res.json()
+
             if (data[0]) {
                 dispatch({ type: ActionTypes.setLocation, location: data[0] });
+                return Promise.resolve(data[0]?.Key as string);
             }
+            return Promise.reject("no key");
         } catch (err) {
-            console.log(err);
+            return Promise.reject(err);
         };
     };
 
-    const fetchCurrentWeather = async () => {
+    const fetchCurrentWeather = async (key: string) => {
         const baseUrl = 'http://dataservice.accuweather.com/currentconditions/v1'
         try {
-            const res = await fetch(`${baseUrl}/${location.Key}?apikey=AajKuPVPSQaHeVqfDiMiscjqoUbACFMx`)
+            const res = await fetch(`${baseUrl}/${key}?apikey=AajKuPVPSQaHeVqfDiMiscjqoUbACFMx`)
             const data = await res.json()
             if (data[0]) {
                 dispatch({ type: ActionTypes.SetCurrentWeather, currentDay: data[0] });
             }
         } catch (err) {
             console.error('current weather error!', err)
+            return Promise.reject(err);
         };
+        return Promise.resolve();
     };
 
-    const fiveDaysForecasts = async () => {
+    const fiveDaysForecasts = async (key: string) => {
         const baseUrl = 'http://dataservice.accuweather.com/forecasts/v1/daily/5day'
         try {
-            const res = await fetch(`${baseUrl}/${location.Key}?apikey=AajKuPVPSQaHeVqfDiMiscjqoUbACFMx`)
+            const res = await fetch(`${baseUrl}/${key}?apikey=AajKuPVPSQaHeVqfDiMiscjqoUbACFMx`)
             const data = await res.json()
+            console.log(data);
 
             if (data) {
                 dispatch({ type: ActionTypes.setFiveDaysForecast, fiveDaysForecast: data });
             }
         } catch (err) {
             console.error('five days error', err)
+            return Promise.reject(err);
         };
+        return Promise.resolve();
     };
 
     const searchedValidation = () => {
@@ -191,7 +195,7 @@ const Home = () => {
 
                         <Text h3 style={styles.labelStyle}>Current Weather:</Text>
                         {toggleFavorites ?
-                            <Icon containerStyle={{ marginHorizontal: 5 }} name='heart' type='evilicon' color='#f50'></Icon> : null
+                            <EvilIcon style={{ marginHorizontal: 5 }} name='heart' color='#f50' size={25}></EvilIcon> : null
                         }
                         <Text style={styles.textStyle}>{location.LocalizedName}</Text>
                         <Text style={styles.textStyle}>{currentDay.WeatherText}</Text>
