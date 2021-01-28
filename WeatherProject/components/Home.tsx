@@ -59,16 +59,20 @@ const Home = () => {
 
     });
 
+    // useEffect(() => {
+    //     setLoading(true);
+    //     fetchLocation().then((key: string) => {
+    //         Promise.all([fetchCurrentWeather(key), fiveDaysForecasts(key)]).then(() => {
+    //             setLoading(false)
+    //         });
+    //     }).catch(error => {
+    //         console.log(error);
+    //     });
+    // }, [searchedCity, favorites]);
+
     useEffect(() => {
-        setLoading(true);
-        fetchLocation().then((key: string) => {
-            Promise.all([fetchCurrentWeather(key), fiveDaysForecasts(key)]).then(() => {
-                setLoading(false)
-            });
-        }).catch(error => {
-            console.log(error);
-        });
-    }, [searchedCity, favorites]);
+        setToggleTempValue(demiCurrent.Temperature.Imperical.Value)
+    }, [])
 
     const fetchLocation = async (): Promise<string> => {
         const baseUrl = 'http://dataservice.accuweather.com/locations/v1/cities/autocomplete'
@@ -140,21 +144,21 @@ const Home = () => {
         let newFavorites: Array<Favorite> = [...favorites];
         if (newFavorites.length > 0) {
             newFavorites.forEach((favorite: Favorite) => {
-                if (favorite.name == location.LocalizedName) {
-                    const removeFavorites = newFavorites.filter(favorite => favorite.name !== location.LocalizedName)
+                if (favorite.name == demiLocal.LocalizedName) {
+                    const removeFavorites = newFavorites.filter(favorite => favorite.name !== demiLocal.LocalizedName)
                     dispatch({ type: ActionTypes.setFavorites, favorites: removeFavorites })
                 } else {
                     newFavorites.push({
-                        temperatureValue: currentDay.Temperature.Metric.Value, temperatureUnit: currentDay.Temperature.Metric.Unit,
-                        currentWeather: currentDay.WeatherText, id: location.Key, name: location.LocalizedName
+                        temperatureValue: demiCurrent.Temperature.Metric.Value, temperatureUnit: demiCurrent.Temperature.Metric.Unit,
+                        currentWeather: demiCurrent.WeatherText, id: demiLocal.Key, name: demiLocal.LocalizedName
                     });
                     dispatch({ type: ActionTypes.setFavorites, favorites: newFavorites })
                 }
             });
         } else {
             newFavorites.push({
-                temperatureValue: currentDay.Temperature.Metric.Value, temperatureUnit: currentDay.Temperature.Metric.Unit,
-                currentWeather: currentDay.WeatherText, id: location.Key, name: location.LocalizedName
+                temperatureValue: demiCurrent.Temperature.Metric.Value, temperatureUnit: demiCurrent.Temperature.Metric.Unit,
+                currentWeather: demiCurrent.WeatherText, id: demiLocal.Key, name: demiLocal.LocalizedName
             });
             dispatch({ type: ActionTypes.setFavorites, favorites: newFavorites })
         };
@@ -164,75 +168,75 @@ const Home = () => {
     const toggleTempUnits = (unit: string) => {
         let newValue = toggleTempValue;
         let newUnit = toggleTempUnit;
-        if (unit == 'F') {
+        if (unit == 'C') {
             newValue = Math.round((newValue * (9 / 5)) + 32)
-            newUnit = 'C'
+            newUnit = 'F'
 
         } else {
             newValue = Math.round((newValue - 32) * (5 / 9))
-            newUnit = 'F'
+            newUnit = 'C'
         }
         setToggleTempValue(newValue)
         setToggleTempUnit(newUnit)
     };
     return (
-        (loading ? <Text>loading</Text> :
-            < View style={styles.container} >
-                <View style={{ flex: 0.5, alignItems: 'center', justifyContent: 'center', flexDirection: 'row' }} >
-                    <TextInput style={styles.inputStyle}
-                        onChangeText={text => { text.replace(/[^A-Za-z]/ig, ''); setInput(text) }}
-                        placeholder="Search City..."
-                        placeholderTextColor={colors.text}
-                        value={input} />
-                    <Button buttonStyle={{ height: 52 }} title='search' onPress={searchedValidation} />
+        // (loading ? <Text>loading</Text> :
+        < View style={styles.container} >
+            <View style={{ flex: 0.5, alignItems: 'center', justifyContent: 'center', flexDirection: 'row' }} >
+                <TextInput style={styles.inputStyle}
+                    onChangeText={text => { text.replace(/[^A-Za-z]/ig, ''); setInput(text) }}
+                    placeholder="Search City..."
+                    placeholderTextColor={colors.text}
+                    value={input} />
+                <Button buttonStyle={{ height: 52 }} title='search' onPress={searchedValidation} />
+            </View>
+
+            <View style={{ flex: 1.7, justifyContent: 'space-around' }} >
+                <View style={{ alignItems: 'center', justifyContent: 'center' }}>
+                    <Button title={`°${toggleTempUnit}`} onPress={() => toggleTempUnits(toggleTempUnit)} />
+
+                    <Text h3 style={styles.labelStyle}>Current Weather:</Text>
+                    {favorites.some(favorite => favorite.name == demiLocal.LocalizedName) ?
+                        <EvilIcon style={{ marginHorizontal: 5 }} name='heart' color='#f50' size={25}></EvilIcon> : null
+                    }
+                    <Text style={styles.textStyle}>{demiLocal.LocalizedName}</Text>
+                    <Text style={styles.textStyle}>{demiCurrent.WeatherText}</Text>
+                    <Text style={styles.textStyle}>{`${toggleTempValue}°${toggleTempUnit}`}</Text>
                 </View>
 
-                <View style={{ flex: 1.7, justifyContent: 'space-around' }} >
-                    <View style={{ alignItems: 'center', justifyContent: 'center' }}>
-                        <Button title={`°${toggleTempUnit}`} onPress={() => toggleTempUnits(toggleTempUnit)} />
-
-                        <Text h3 style={styles.labelStyle}>Current Weather:</Text>
-                        {favorites.some(favorite => favorite.name == location.LocalizedName) ?
-                            <EvilIcon style={{ marginHorizontal: 5 }} name='heart' color='#f50' size={25}></EvilIcon> : null
-                        }
-                        <Text style={styles.textStyle}>{location.LocalizedName}</Text>
-                        <Text style={styles.textStyle}>{currentDay.WeatherText}</Text>
-                        <Text style={styles.textStyle}>{`${toggleTempValue}°${toggleTempUnit}`}</Text>
-                    </View>
-
-                    <View style={{ alignItems: 'center' }}>
-                        <Button title={favorites.some(favorite => favorite.name == location.LocalizedName) ? 'remove from favorites' : 'add to favorites'} onPress={handleFavorites} />
-                    </View>
-
-                    <View style={{ alignItems: 'center', justifyContent: 'center' }}>
-                        <Text h3 style={styles.labelStyle} > next 5 day forecast:</Text>
-                        <Text style={[styles.textStyle, { width: '90%' }]}>{fiveDaysForecast?.Headline?.Text}</Text>
-                    </View>
-
+                <View style={{ alignItems: 'center' }}>
+                    <Button title={favorites.some(favorite => favorite.name == demiLocal.LocalizedName) ? 'remove from favorites' : 'add to favorites'} onPress={handleFavorites} />
                 </View>
 
-                <ScrollView style={{ flex: 1 }} horizontal={true}>
-                    <View style={styles.fiveDaysForecastView}>
-                        {fiveDaysForecast?.DailyForecasts?.map(dailyForecast => {
-                            // console.log(dailyForecast.Day.Icon.toString());
-                            const date = new Date(dailyForecast.Date).toString();
-                            const spaceIndex = date.indexOf(' ')
-                            return (
-                                <Card key={dailyForecast.Date} containerStyle={{ borderColor: colors.border, backgroundColor: colors.background }}>
-                                    <Fragment>
-                                        <Text h4 style={styles.textStyle}>{date.substr(0, spaceIndex)}</Text>
-                                        <Image style={styles.imageStyle} source={require(`../resources/weather-icons/1.png`)} />
-                                        <Text style={styles.textStyle} >{`Max: ${dailyForecast?.Temperature?.Maximum.Value}°${toggleTempUnit}`}</Text>
-                                        <Text style={styles.textStyle} >{`Min: ${dailyForecast?.Temperature?.Minimum.Value}°${toggleTempUnit}`}</Text>
-                                    </Fragment>
-                                </Card>
-                            )
-                        })}
-                    </View>
-                </ScrollView>
-            </View >
-        )
+                <View style={{ alignItems: 'center', justifyContent: 'center' }}>
+                    <Text h3 style={styles.labelStyle} > next 5 day forecast:</Text>
+                    <Text style={[styles.textStyle, { width: '90%' }]}>{demiFive?.Headline?.Text}</Text>
+                </View>
+
+            </View>
+
+            <ScrollView style={{ flex: 1 }} horizontal={true}>
+                <View style={styles.fiveDaysForecastView}>
+                    {demiFive?.DailyForecasts?.map(dailyForecast => {
+                        // console.log(dailyForecast.Day.Icon.toString());
+                        const date = new Date(dailyForecast.Date).toString();
+                        const spaceIndex = date.indexOf(' ')
+                        return (
+                            <Card key={dailyForecast.Date} containerStyle={{ borderColor: colors.border, backgroundColor: colors.background }}>
+                                <Fragment>
+                                    <Text h4 style={styles.textStyle}>{date.substr(0, spaceIndex)}</Text>
+                                    <Image style={styles.imageStyle} source={require(`../resources/weather-icons/1.png`)} />
+                                    <Text style={styles.textStyle} >{`Max: ${dailyForecast?.Temperature?.Maximum.Value}°${toggleTempUnit}`}</Text>
+                                    <Text style={styles.textStyle} >{`Min: ${dailyForecast?.Temperature?.Minimum.Value}°${toggleTempUnit}`}</Text>
+                                </Fragment>
+                            </Card>
+                        )
+                    })}
+                </View>
+            </ScrollView>
+        </View >
     )
+    // )
 
 };
 
