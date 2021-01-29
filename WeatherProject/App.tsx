@@ -20,7 +20,7 @@ const App = () => {
     <AppearanceProvider>
       <NavigationContainer theme={themeButtons[themeIndex] === 'Dark' ? DarkTheme : DefaultTheme}>
         <RootStack.Navigator initialRouteName="Home" screenOptions={({ navigation }) => ({
-          title: 'Home', headerRight: () => (
+          headerLeft: null, headerRight: () => (
             <View style={{ flexDirection: 'row' }}>
               <ButtonGroup
                 onPress={(themeIndex) => {
