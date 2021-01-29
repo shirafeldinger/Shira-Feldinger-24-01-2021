@@ -1,6 +1,6 @@
 import React, { Fragment, useEffect, useState } from "react";
 import { Image, StyleSheet, View } from "react-native";
-import { Text, Card, Icon, Button } from 'react-native-elements';
+import { Text, Card, Button } from 'react-native-elements';
 import { ScrollView, TextInput } from "react-native-gesture-handler";
 import { useDispatch, useSelector } from "react-redux";
 import { ActionTypes, CurrentWeather, FiveDaysForecast, WeatherState, Location, Favorite } from "../types";
@@ -61,28 +61,28 @@ const Home = () => {
 
     });
 
-    // useEffect(() => {
-    //     setLoading(true);
-    //     fetchLocation().then((key: string) => {
-    //         Promise.all([fetchCurrentWeather(key), fiveDaysForecasts(key)]).then(() => {
-    //             setLoading(false);
-    //             setCurrentToggleTempValue(currentDay.Temperature.Imperical.Value)
-    //         });
-    //     }).catch(error => {
-    //         setErrors(error);
-    //         Toast.show({
-    //             text1: error,
-    //             type: 'error',
-    //             visibilityTime: 3000,
-    //             autoHide: true,
-    //             position: 'bottom'
-    //         });
-    //     });
-    // }, [searchedCity]);
-
     useEffect(() => {
-        setCurrentToggleTempValue(demiCurrent.Temperature.Imperical.Value)
-    }, [])
+        setLoading(true);
+        fetchLocation().then((key: string) => {
+            Promise.all([fetchCurrentWeather(key), fiveDaysForecasts(key)]).then(() => {
+                setLoading(false);
+                setCurrentToggleTempValue(currentDay.Temperature.Imperical.Value)
+            });
+        }).catch(error => {
+            setErrors(error);
+            Toast.show({
+                text1: error,
+                type: 'error',
+                visibilityTime: 3000,
+                autoHide: true,
+                position: 'bottom'
+            });
+        });
+    }, [searchedCity]);
+
+    // useEffect(() => {
+    //     setCurrentToggleTempValue(demiCurrent.Temperature.Imperical.Value)
+    // }, [])
 
     const fetchLocation = async (): Promise<string> => {
         const baseUrl = 'http://dataservice.accuweather.com/locations/v1/cities/autocomplete'
@@ -156,21 +156,21 @@ const Home = () => {
         if (newFavorites.length > 0) {
             newFavorites.forEach((favorite: Favorite) => {
                 console.log(favorite.name);
-                if (favorite.name = demiLocal.LocalizedName) {
-                    const removeFavorites = newFavorites.filter(favorite => favorite.name !== demiLocal.LocalizedName)
+                if (favorite.name = location.LocalizedName) {
+                    const removeFavorites = newFavorites.filter(favorite => favorite.name !== location.LocalizedName)
                     dispatch({ type: ActionTypes.setFavorites, favorites: removeFavorites })
                 } else {
                     newFavorites.push({
-                        temperatureValue: demiCurrent.Temperature.Metric.Value, temperatureUnit: demiCurrent.Temperature.Metric.Unit,
-                        currentWeather: demiCurrent.WeatherText, id: demiLocal.Key, name: demiLocal.LocalizedName, icon: demiCurrent.WeatherIcon
+                        temperatureValue: currentDay.Temperature.Metric.Value, temperatureUnit: currentDay.Temperature.Metric.Unit,
+                        currentWeather: currentDay.WeatherText, id: location.Key, name: location.LocalizedName, icon: currentDay.WeatherIcon
                     });
                     dispatch({ type: ActionTypes.setFavorites, favorites: newFavorites })
                 }
             });
         } else {
             newFavorites.push({
-                temperatureValue: demiCurrent.Temperature.Metric.Value, temperatureUnit: demiCurrent.Temperature.Metric.Unit,
-                currentWeather: demiCurrent.WeatherText, id: demiLocal.Key, name: demiLocal.LocalizedName, icon: demiCurrent.WeatherIcon
+                temperatureValue: currentDay.Temperature.Metric.Value, temperatureUnit: currentDay.Temperature.Metric.Unit,
+                currentWeather: currentDay.WeatherText, id: location.Key, name: location.LocalizedName, icon: currentDay.WeatherIcon
             });
             dispatch({ type: ActionTypes.setFavorites, favorites: newFavorites })
         };
@@ -191,62 +191,61 @@ const Home = () => {
 
     };
     return (
-
-        < View style={styles.container} >
-            <View style={{ flex: 0.5, alignItems: 'center', justifyContent: 'center', flexDirection: 'row' }} >
-                <TextInput style={styles.inputStyle}
-                    onChangeText={text => { text.replace(/[^A-Za-z]/ig, ''); setInput(text) }}
-                    placeholder="Search City..."
-                    placeholderTextColor={colors.text}
-                    value={input} />
-                <Button buttonStyle={{ height: 52 }} title='search' onPress={searchedValidation} />
-            </View>
-
-            <View style={{ flex: 1.7, justifyContent: 'space-around' }} >
-                <View style={{ alignItems: 'center', justifyContent: 'center' }}>
-                    <Button title={`°${toggleTempUnit}`} onPress={() => toggleTempUnits(toggleTempUnit, currentToggleTempValue)} />
-
-                    <Text h3 style={styles.labelStyle}>Current Weather:</Text>
-                    {favorites.some(favorite => favorite.name == demiLocal.LocalizedName) ?
-                        <EvilIcon style={{ marginHorizontal: 5 }} name='heart' color='#f50' size={25}></EvilIcon> : null
-                    }
-                    <Text style={styles.textStyle}>{demiLocal.LocalizedName}</Text>
-                    <Text style={styles.textStyle}>{demiCurrent.WeatherText}</Text>
-                    <Text style={styles.textStyle}>{`${currentToggleTempValue}°${toggleTempUnit}`}</Text>
+        (loading ? <Text>loading</Text> :
+            < View style={styles.container} >
+                <View style={{ flex: 0.5, alignItems: 'center', justifyContent: 'center', flexDirection: 'row' }} >
+                    <TextInput style={styles.inputStyle}
+                        onChangeText={text => { text.replace(/[^A-Za-z]/ig, ''); setInput(text) }}
+                        placeholder="Search City..."
+                        placeholderTextColor={colors.text}
+                        value={input} />
+                    <Button buttonStyle={{ height: 52 }} title='search' onPress={searchedValidation} />
                 </View>
 
-                <View style={{ alignItems: 'center' }}>
-                    <Button title={favorites.some(favorite => favorite.name == demiLocal.LocalizedName) ? 'remove from favorites' : 'add to favorites'} onPress={handleFavorites} />
+                <View style={{ flex: 1.7, justifyContent: 'space-around' }} >
+                    <View style={{ alignItems: 'center', justifyContent: 'center' }}>
+                        <Button title={`°${toggleTempUnit}`} onPress={() => toggleTempUnits(toggleTempUnit, currentToggleTempValue)} />
+
+                        <Text h3 style={styles.labelStyle}>Current Weather:</Text>
+                        {favorites.some(favorite => favorite.name == location.LocalizedName) ?
+                            <EvilIcon style={{ marginHorizontal: 5 }} name='heart' color='#f50' size={25}></EvilIcon> : null
+                        }
+                        <Text style={styles.textStyle}>{location.LocalizedName}</Text>
+                        <Text style={styles.textStyle}>{currentDay.WeatherText}</Text>
+                        <Text style={styles.textStyle}>{`${currentToggleTempValue}°${toggleTempUnit}`}</Text>
+                    </View>
+
+                    <View style={{ alignItems: 'center' }}>
+                        <Button title={favorites.some(favorite => favorite.name == location.LocalizedName) ? 'remove from favorites' : 'add to favorites'} onPress={handleFavorites} />
+                    </View>
+
+                    <View style={{ alignItems: 'center', justifyContent: 'center' }}>
+                        <Text h3 style={styles.labelStyle} > next 5 day forecast:</Text>
+                        <Text style={[styles.textStyle, { width: '90%' }]}>{fiveDaysForecast?.Headline?.Text}</Text>
+                    </View>
+
                 </View>
 
-                <View style={{ alignItems: 'center', justifyContent: 'center' }}>
-                    <Text h3 style={styles.labelStyle} > next 5 day forecast:</Text>
-                    <Text style={[styles.textStyle, { width: '90%' }]}>{demiFive?.Headline?.Text}</Text>
-                </View>
-
-            </View>
-
-            <ScrollView style={{ flex: 1 }} horizontal={true}>
-                <View style={styles.fiveDaysForecastView}>
-                    {demiFive?.DailyForecasts?.map(dailyForecast => {
-                        // console.log(dailyForecast.Day.Icon.toString());
-                        const date = new Date(dailyForecast.Date).toString();
-                        const spaceIndex = date.indexOf(' ');
-                        return (
-                            <Card key={dailyForecast.Date} containerStyle={{ borderColor: colors.border, backgroundColor: colors.background }}>
-                                <Fragment>
-                                    <Text h4 style={styles.textStyle}>{date.substr(0, spaceIndex)}</Text>
-                                    <Image style={styles.imageStyle} source={iconsImages(dailyForecast.Day.Icon)} />
-                                    <Text style={styles.textStyle} >{`Max: ${dailyForecast?.Temperature?.Maximum.Value}°${dailyForecast?.Temperature?.Maximum.Unit}`}</Text>
-                                    <Text style={styles.textStyle} >{`Min: ${dailyForecast?.Temperature?.Minimum.Value}°${dailyForecast?.Temperature?.Minimum.Unit}`}</Text>
-                                </Fragment>
-                            </Card>
-                        )
-                    })}
-                </View>
-            </ScrollView>
-        </View >
-    )
+                <ScrollView style={{ flex: 1 }} horizontal={true}>
+                    <View style={styles.fiveDaysForecastView}>
+                        {fiveDaysForecast?.DailyForecasts?.map(dailyForecast => {
+                            const date = new Date(dailyForecast.Date).toString();
+                            const spaceIndex = date.indexOf(' ');
+                            return (
+                                <Card key={dailyForecast.Date} containerStyle={{ borderColor: colors.border, backgroundColor: colors.background }}>
+                                    <Fragment>
+                                        <Text h4 style={styles.textStyle}>{date.substr(0, spaceIndex)}</Text>
+                                        <Image style={styles.imageStyle} source={iconsImages(dailyForecast.Day.Icon)} />
+                                        <Text style={styles.textStyle} >{`Max: ${dailyForecast?.Temperature?.Maximum.Value}°${dailyForecast?.Temperature?.Maximum.Unit}`}</Text>
+                                        <Text style={styles.textStyle} >{`Min: ${dailyForecast?.Temperature?.Minimum.Value}°${dailyForecast?.Temperature?.Minimum.Unit}`}</Text>
+                                    </Fragment>
+                                </Card>
+                            )
+                        })}
+                    </View>
+                </ScrollView>
+            </View >
+        ))
 
 };
 
