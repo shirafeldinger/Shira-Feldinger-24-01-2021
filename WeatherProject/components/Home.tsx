@@ -16,11 +16,12 @@ const Home = () => {
     const searchedCity = useSelector<WeatherState>(state => state.searchedCity) as string;
     const favorites = useSelector<WeatherState>(state => state.favorites) as Array<Favorite>
     const dispatch = useDispatch();
-    const [input, setInput] = useState('')
     const { colors } = useTheme();
+    const [input, setInput] = useState('')
     const [currentToggleTempValue, setCurrentToggleTempValue] = useState(0)
     const [toggleTempUnit, setToggleTempUnit] = useState('F')
     const [loading, setLoading] = useState(true);
+    const [error, setErrors] = useState('');
 
 
     const styles = StyleSheet.create({
@@ -67,9 +68,16 @@ const Home = () => {
                 setCurrentToggleTempValue(currentDay.Temperature.Imperical.Value)
             });
         }).catch(error => {
-            console.log(error);
+            setErrors(error);
+            Toast.show({
+                text1: error,
+                type: 'error',
+                visibilityTime: 3000,
+                autoHide: true,
+                position: 'bottom'
+            });
         });
-    }, [searchedCity, favorites]);
+    }, [searchedCity]);
 
     // useEffect(() => {
     //     setCurrentToggleTempValue(demiCurrent.Temperature.Imperical.Value)
@@ -84,9 +92,11 @@ const Home = () => {
             if (data[0]) {
                 dispatch({ type: ActionTypes.setLocation, location: data[0] });
                 return Promise.resolve(data[0]?.Key as string);
+            } else {
+                return Promise.reject("could find location");
             }
-            return Promise.reject("no key");
         } catch (err) {
+            setErrors(error);
             return Promise.reject(err);
         };
     };
@@ -98,9 +108,11 @@ const Home = () => {
             const data = await res.json()
             if (data[0]) {
                 dispatch({ type: ActionTypes.SetCurrentWeather, currentDay: data[0] });
+            } else {
+                return Promise.reject("could find current weather");
             }
         } catch (err) {
-            console.error('current weather error!', err)
+            setErrors(error);
             return Promise.reject(err);
         };
         return Promise.resolve();
@@ -114,9 +126,11 @@ const Home = () => {
 
             if (data) {
                 dispatch({ type: ActionTypes.setFiveDaysForecast, fiveDaysForecast: data });
+            } else {
+                return Promise.reject("could find weekly weather");
             }
         } catch (err) {
-            console.error('five days error', err)
+            setErrors(error);
             return Promise.reject(err);
         };
         return Promise.resolve();
@@ -138,10 +152,10 @@ const Home = () => {
     };
 
     const handleFavorites = () => {
-        console.log(favorites, 'start');
         let newFavorites: Array<Favorite> = [...favorites];
         if (newFavorites.length > 0) {
             newFavorites.forEach((favorite: Favorite) => {
+                console.log(favorite.name);
                 if (favorite.name = location.LocalizedName) {
                     const removeFavorites = newFavorites.filter(favorite => favorite.name !== location.LocalizedName)
                     dispatch({ type: ActionTypes.setFavorites, favorites: removeFavorites })
@@ -160,17 +174,14 @@ const Home = () => {
             });
             dispatch({ type: ActionTypes.setFavorites, favorites: newFavorites })
         };
-        console.log(favorites, 'end');
     };
 
     const toggleTempUnits = (unit: string, tempValue: number) => {
-        console.log(tempValue);
         let newValue = tempValue;
         let newUnit = toggleTempUnit;
         if (unit == 'C') {
             newValue = Math.round((newValue * (9 / 5)) + 32)
             newUnit = 'F'
-
         } else {
             newValue = Math.round((newValue - 32) * (5 / 9))
             newUnit = 'C'
