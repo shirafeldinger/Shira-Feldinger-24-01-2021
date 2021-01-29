@@ -151,12 +151,12 @@ const Home = () => {
         };
         dispatch({ type: ActionTypes.setSearchedCity, searchedCity: input });
     };
+
     const handleFavorites = () => {
         let newFavorites: Array<Favorite> = [...favorites];
         if (newFavorites.length > 0) {
             newFavorites.forEach((favorite: Favorite) => {
-                console.log(favorite.name);
-                if (favorite.name = location.LocalizedName) {
+                if (favorite.name === location.LocalizedName) {
                     const removeFavorites = newFavorites.filter(favorite => favorite.name !== location.LocalizedName)
                     dispatch({ type: ActionTypes.setFavorites, favorites: removeFavorites })
                 } else {
@@ -164,8 +164,8 @@ const Home = () => {
                         temperatureValue: currentDay.Temperature.Metric.Value, temperatureUnit: currentDay.Temperature.Metric.Unit,
                         currentWeather: currentDay.WeatherText, id: location.Key, name: location.LocalizedName, icon: currentDay.WeatherIcon
                     });
-                    dispatch({ type: ActionTypes.setFavorites, favorites: newFavorites })
-                }
+                    dispatch({ type: ActionTypes.setFavorites, favorites: newFavorites });
+                };
             });
         } else {
             newFavorites.push({
