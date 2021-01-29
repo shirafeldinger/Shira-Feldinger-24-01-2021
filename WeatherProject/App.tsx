@@ -7,9 +7,9 @@ import { createStackNavigator } from '@react-navigation/stack';
 import Favorites from "./components/Favorites";
 import { ButtonGroup } from "react-native-elements";
 import Toast from 'react-native-toast-message';
-import { View } from "react-native";
+import { Dimensions, View } from "react-native";
 
-
+const dimensions = Dimensions.get('window');
 const RootStack = createStackNavigator<RootStackParamList>();
 const App = () => {
   const [selectedIndex, setSelectedIndex] = useState(2)
@@ -26,13 +26,13 @@ const App = () => {
                 onPress={(themeIndex) => {
                   setThemeIndex(themeIndex);
                 }}
-                selectedIndex={themeIndex} buttons={themeButtons} containerStyle={{ width: 100 }} />
+                selectedIndex={themeIndex} buttons={themeButtons} containerStyle={{ width: dimensions.width < 350 ? 80 : 100, }} />
               <ButtonGroup
                 onPress={(selectedIndex) => {
                   setSelectedIndex(selectedIndex);
                   navigation.navigate(pagesButtons[selectedIndex])
                 }}
-                selectedIndex={selectedIndex} buttons={pagesButtons} containerStyle={{ width: 150 }} />
+                selectedIndex={selectedIndex} buttons={pagesButtons} containerStyle={{ width: dimensions.width < 350 ? 130 : 150, }} />
             </View>
           )
         })}>

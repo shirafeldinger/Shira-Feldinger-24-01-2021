@@ -1,5 +1,5 @@
 import React, { Fragment, useEffect, useState } from "react";
-import { Image, KeyboardAvoidingView, StyleSheet, View } from "react-native";
+import { Dimensions, Image, KeyboardAvoidingView, StyleSheet, View } from "react-native";
 import { Text, Card, Button } from 'react-native-elements';
 import { ScrollView, TextInput } from "react-native-gesture-handler";
 import { useDispatch, useSelector } from "react-redux";
@@ -11,7 +11,7 @@ import { default as EvilIcon } from 'react-native-vector-icons/EvilIcons';
 import { iconsImages } from '../resources/iconsSwitch';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 
-
+const dimensions = Dimensions.get('window');
 const Home = () => {
     const currentDay = useSelector<WeatherState>(state => state.currentDay) as CurrentWeather;
     const fiveDaysForecast = useSelector<WeatherState>(state => state.fiveDaysForecast) as FiveDaysForecast;
@@ -32,9 +32,10 @@ const Home = () => {
             borderColor: 'gray',
             borderWidth: 1,
             width: '50%',
+            height: dimensions.width < 350 ? '80%' : '100%',
             alignSelf: 'center',
             textAlign: 'center',
-            fontSize: 17,
+            fontSize: dimensions.width < 350 ? 12 : 17,
         },
 
         labelStyle: {
@@ -44,7 +45,7 @@ const Home = () => {
         },
         textStyle: {
             textAlign: 'center',
-            fontSize: 17,
+            fontSize: dimensions.width < 350 ? 12 : 17,
             color: colors.text
         },
         imageStyle: {
@@ -53,10 +54,12 @@ const Home = () => {
             alignSelf: 'center'
         },
         fiveDaysForecastView: {
-            flex: 1,
             flexDirection: 'row',
             alignItems: 'center',
         },
+        buttonStyle: {
+            height: dimensions.width < 350 ? 30 : 45,
+        }
 
     });
     // useEffect(() => {
@@ -194,34 +197,34 @@ const Home = () => {
         // (loading ? <Text>loading</Text> :
 
         <KeyboardAwareScrollView>
-            <View style={{ alignItems: 'center', justifyContent: 'center', flexDirection: 'row', margin: 10 }} >
+            <View style={{ alignItems: 'center', justifyContent: 'center', flexDirection: 'row', margin: "2%" }} >
                 <TextInput style={styles.inputStyle}
                     onChangeText={text => { text.replace(/[^A-Za-z]/ig, ''); setInput(text) }}
                     placeholder="Search City..."
                     placeholderTextColor={colors.text}
                     value={input} />
-                <Button buttonStyle={{ height: 52 }} title='search' onPress={searchedValidation} />
+                <Button buttonStyle={{ height: dimensions.width < 350 ? 40 : 50 }} title='Search' onPress={searchedValidation} />
             </View>
 
-            <View style={{ margin: 10 }}  >
+            <View style={{ margin: "2%" }}  >
                 <View style={{ alignItems: 'center', justifyContent: 'center' }}>
-                    <Button title={`°${toggleTempUnit}`} onPress={() => toggleTempUnits(toggleTempUnit, currentToggleTempValue)} />
+                    <Button buttonStyle={styles.buttonStyle} title={`°${toggleTempUnit}`} onPress={() => toggleTempUnits(toggleTempUnit, currentToggleTempValue)} />
 
-                    <Text h3 style={styles.labelStyle}>Current Weather:</Text>
+                    <Text h4 style={styles.labelStyle}>Current Weather:</Text>
                     {favorites.some(favorite => favorite.name == demiLocal.LocalizedName) ?
-                        <EvilIcon style={{ marginHorizontal: 5 }} name='heart' color='#f50' size={40}></EvilIcon> : null
+                        <EvilIcon name='heart' color='#f50' size={40}></EvilIcon> : null
                     }
                     <Text style={styles.textStyle}>{demiLocal.LocalizedName}</Text>
                     <Text style={styles.textStyle}>{demiCurrent.WeatherText}</Text>
                     <Text style={styles.textStyle}>{`${currentToggleTempValue}°${toggleTempUnit}`}</Text>
                 </View>
 
-                <View style={{ alignItems: 'center', margin: 10 }}>
-                    <Button title={favorites.some(favorite => favorite.name == demiLocal.LocalizedName) ? 'remove from favorites' : 'add to favorites'} onPress={handleFavorites} />
+                <View style={{ alignItems: 'center', margin: "2%" }}>
+                    <Button buttonStyle={styles.buttonStyle} title={favorites.some(favorite => favorite.name == demiLocal.LocalizedName) ? 'Remove from favorites' : 'Add to favorites'} onPress={handleFavorites} />
                 </View>
 
                 <View style={{ alignItems: 'center', justifyContent: 'center' }}>
-                    <Text h3 style={styles.labelStyle} > next 5 day forecast:</Text>
+                    <Text h4 style={styles.labelStyle} > next 5 day forecast:</Text>
                     <Text style={[styles.textStyle, { width: '90%' }]}>{demiFive?.Headline?.Text}</Text>
                 </View>
 
