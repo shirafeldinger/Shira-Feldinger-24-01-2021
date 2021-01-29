@@ -1,7 +1,7 @@
 import React, { Fragment, useEffect, useState } from "react";
 import { Dimensions, Image, KeyboardAvoidingView, StyleSheet, View } from "react-native";
 import { Text, Card, Button } from 'react-native-elements';
-import { ScrollView, TextInput } from "react-native-gesture-handler";
+import { ScrollView, TextInput, TouchableOpacity } from "react-native-gesture-handler";
 import { useDispatch, useSelector } from "react-redux";
 import { ActionTypes, CurrentWeather, FiveDaysForecast, WeatherState, Location, Favorite } from "../types";
 import { demiCurrent, demiFive, demiLocal } from "../demiData";
@@ -32,7 +32,6 @@ const Home = () => {
             borderColor: 'gray',
             borderWidth: 1,
             width: '50%',
-            height: dimensions.width < 350 ? '80%' : '100%',
             alignSelf: 'center',
             textAlign: 'center',
             fontSize: dimensions.width < 350 ? 12 : 17,
@@ -208,20 +207,25 @@ const Home = () => {
                     placeholder="Search City..."
                     placeholderTextColor={colors.text}
                     value={input} />
-                <Button buttonStyle={{ height: dimensions.width < 350 ? 40 : 50 }} title='Search' onPress={searchedValidation} />
+                <EvilIcon onPress={searchedValidation} name={'search'} size={25} style={{ position: 'absolute', right: '27%' }} />
             </View>
 
-            <View style={{ margin: "2%" }}  >
+            <View style={{ margin: dimensions.width < 350 ? '2%' : '5%', }}  >
                 <View style={{ alignItems: 'center', justifyContent: 'center' }}>
-                    <Button buttonStyle={styles.buttonStyle} title={`°${toggleTempUnit}`} onPress={() => toggleTempUnits(toggleTempUnit, currentToggleTempValue)} />
 
-                    <Text h4 style={styles.labelStyle}>Current Weather:</Text>
+                    <Text h4 style={styles.labelStyle}>Current Weather in {`${demiLocal.LocalizedName}`}:</Text>
                     {favorites.some(favorite => favorite.name == demiLocal.LocalizedName) ?
                         <EvilIcon name='heart' color='#f50' size={40}></EvilIcon> : null
                     }
-                    <Text style={styles.textStyle}>{demiLocal.LocalizedName}</Text>
                     <Text style={styles.textStyle}>{demiCurrent.WeatherText}</Text>
-                    <Text style={styles.textStyle}>{`${currentToggleTempValue}°${toggleTempUnit}`}</Text>
+                    <Image style={styles.imageStyle} source={iconsImages(demiCurrent.WeatherIcon)} />
+
+                    <View>
+                        <Text style={styles.textStyle}>{`${currentToggleTempValue}°${toggleTempUnit}`}</Text>
+                        <TouchableOpacity onPress={() => toggleTempUnits(toggleTempUnit, currentToggleTempValue)}>
+                            <Text style={[styles.textStyle, { color: '#3399ff' }]}>Press to change units</Text>
+                        </TouchableOpacity>
+                    </View>
                 </View>
 
                 <View style={{ alignItems: 'center', margin: "2%" }}>
