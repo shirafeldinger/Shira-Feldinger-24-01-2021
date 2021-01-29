@@ -51,8 +51,8 @@ export interface DailyForecasts {
   };
 }
 export type FiveDaysForecast = {
-  Headline: Headline | null;
-  DailyForecasts: Array<DailyForecasts> | null;
+  Headline: Headline | undefined;
+  DailyForecasts: Array<DailyForecasts> | undefined;
 };
 export enum ActionTypes {
   SetCurrentWeather = 'SET_CURRENT_WEATHER',
@@ -73,9 +73,9 @@ export type Location = {
 };
 
 export type WeatherState = {
-  currentDay: CurrentWeather | null;
+  currentDay: CurrentWeather | undefined;
   fiveDaysForecast: FiveDaysForecast;
-  location: Location | null;
+  location: Location | undefined;
   searchedCity: string;
   favorites: Array<Favorite>;
 };
@@ -83,7 +83,7 @@ export type WeatherState = {
 export type WeatherActions =
   | {
       type: ActionTypes.SetCurrentWeather;
-      currentDay: CurrentWeather | null;
+      currentDay: CurrentWeather | undefined;
     }
   | {
       type: ActionTypes.setFiveDaysForecast;
@@ -91,7 +91,7 @@ export type WeatherActions =
     }
   | {
       type: ActionTypes.setLocation;
-      location: Location | null;
+      location: Location | undefined;
     }
   | {
       type: ActionTypes.setSearchedCity;

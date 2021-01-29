@@ -12,9 +12,9 @@ import { WeatherState, WeatherActions, ActionTypes } from './types';
 
 export const AppWrapper = () => {
   const initialState = {
-    currentDay: null,
-    fiveDaysForecast: { Headline: null, DailyForecasts: null },
-    location: null,
+    currentDay: undefined,
+    fiveDaysForecast: { Headline: undefined, DailyForecasts: undefined },
+    location: undefined,
     searchedCity: 'Tel Aviv',
     favorites: []
   };
