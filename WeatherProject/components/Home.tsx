@@ -59,6 +59,11 @@ const Home = () => {
         },
         buttonStyle: {
             height: dimensions.width < 350 ? 30 : 45,
+        },
+        inputView: {
+            alignItems: 'center',
+            justifyContent: 'center', flexDirection: 'row',
+            margin: dimensions.width < 350 ? '2%' : '5%',
         }
 
     });
@@ -197,7 +202,7 @@ const Home = () => {
         // (loading ? <Text>loading</Text> :
 
         <KeyboardAwareScrollView>
-            <View style={{ alignItems: 'center', justifyContent: 'center', flexDirection: 'row', margin: "2%" }} >
+            <View style={styles.inputView} >
                 <TextInput style={styles.inputStyle}
                     onChangeText={text => { text.replace(/[^A-Za-z]/ig, ''); setInput(text) }}
                     placeholder="Search City..."
