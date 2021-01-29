@@ -1,10 +1,11 @@
 import React from "react";
-import { ScrollView, StyleSheet, View } from "react-native";
+import { ScrollView, StyleSheet, View, Image } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { ActionTypes, Favorite, NavigationProps, WeatherState } from "../types";
-import { Text, Card, Icon } from 'react-native-elements';
+import { Text, Card } from 'react-native-elements';
 import { useTheme } from '@react-navigation/native';
 import { TouchableOpacity } from "react-native-gesture-handler";
+import { iconsImages } from "../resources/iconsSwitch";
 
 const Favorites = ({ navigation }: NavigationProps) => {
     const { colors } = useTheme();
@@ -30,6 +31,11 @@ const Favorites = ({ navigation }: NavigationProps) => {
             fontSize: 17,
             color: colors.text
         },
+        imageStyle: {
+            width: 50,
+            height: 50,
+            alignSelf: 'center'
+        },
     });
 
     const showFavoriteDetails = (name: string) => {
@@ -48,6 +54,7 @@ const Favorites = ({ navigation }: NavigationProps) => {
                             <TouchableOpacity key={favorite.id} onPress={() => showFavoriteDetails(favorite.name)}>
                                 <Card containerStyle={styles.cardStyle}>
                                     <Text style={styles.textStyle}>{favorite.name}</Text>
+                                    <Image style={styles.imageStyle} source={iconsImages(favorite.icon)} />
                                     <Text style={styles.textStyle}>{`${favorite.temperatureValue}°${favorite.temperatureUnit}`}</Text>
                                     <Text style={styles.textStyle}>{favorite.currentWeather}</Text>
                                 </Card>

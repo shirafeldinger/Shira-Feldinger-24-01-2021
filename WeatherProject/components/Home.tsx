@@ -162,7 +162,7 @@ const Home = () => {
                 } else {
                     newFavorites.push({
                         temperatureValue: demiCurrent.Temperature.Metric.Value, temperatureUnit: demiCurrent.Temperature.Metric.Unit,
-                        currentWeather: demiCurrent.WeatherText, id: demiLocal.Key, name: demiLocal.LocalizedName
+                        currentWeather: demiCurrent.WeatherText, id: demiLocal.Key, name: demiLocal.LocalizedName, icon: demiCurrent.WeatherIcon
                     });
                     dispatch({ type: ActionTypes.setFavorites, favorites: newFavorites })
                 }
@@ -170,7 +170,7 @@ const Home = () => {
         } else {
             newFavorites.push({
                 temperatureValue: demiCurrent.Temperature.Metric.Value, temperatureUnit: demiCurrent.Temperature.Metric.Unit,
-                currentWeather: demiCurrent.WeatherText, id: demiLocal.Key, name: demiLocal.LocalizedName
+                currentWeather: demiCurrent.WeatherText, id: demiLocal.Key, name: demiLocal.LocalizedName, icon: demiCurrent.WeatherIcon
             });
             dispatch({ type: ActionTypes.setFavorites, favorites: newFavorites })
         };

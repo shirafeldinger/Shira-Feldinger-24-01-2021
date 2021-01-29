@@ -122,4 +122,5 @@ export type Favorite = {
   name: string;
   temperatureValue: number;
   temperatureUnit: string;
+  icon: number;
 };
