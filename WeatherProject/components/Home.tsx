@@ -1,5 +1,5 @@
 import React, { Fragment, useEffect, useState } from "react";
-import { Dimensions, Image, KeyboardAvoidingView, StyleSheet, View } from "react-native";
+import { ActivityIndicator, Dimensions, Image, KeyboardAvoidingView, StyleSheet, View } from "react-native";
 import { Text, Card, Button } from 'react-native-elements';
 import { ScrollView, TextInput, TouchableOpacity } from "react-native-gesture-handler";
 import { useDispatch, useSelector } from "react-redux";
@@ -198,68 +198,71 @@ const Home = () => {
 
     };
     return (
-        // (loading ? <Text>loading</Text> :
+        (loading ?
+            <View style={{ alignItems: 'center', justifyContent: 'center', flex: 1 }}>
+                <Text h1 style={styles.textStyle} >Loading...</Text>
+                <ActivityIndicator size="large" color="#3399ff" />
+            </View> :
+            <KeyboardAwareScrollView>
+                <View style={styles.inputView} >
+                    <TextInput style={styles.inputStyle}
+                        onChangeText={text => { text.replace(/[^A-Za-z]/ig, ''); setInput(text) }}
+                        placeholder="Search City..."
+                        placeholderTextColor={colors.text}
+                        value={input} />
+                    <EvilIcon onPress={searchedValidation} name={'search'} size={25} style={{ position: 'absolute', right: '27%' }} />
+                </View>
 
-        <KeyboardAwareScrollView>
-            <View style={styles.inputView} >
-                <TextInput style={styles.inputStyle}
-                    onChangeText={text => { text.replace(/[^A-Za-z]/ig, ''); setInput(text) }}
-                    placeholder="Search City..."
-                    placeholderTextColor={colors.text}
-                    value={input} />
-                <EvilIcon onPress={searchedValidation} name={'search'} size={25} style={{ position: 'absolute', right: '27%' }} />
-            </View>
+                <View style={{ margin: dimensions.width < 350 ? '2%' : '5%', }}  >
+                    <View style={{ alignItems: 'center', justifyContent: 'center' }}>
 
-            <View style={{ margin: dimensions.width < 350 ? '2%' : '5%', }}  >
-                <View style={{ alignItems: 'center', justifyContent: 'center' }}>
+                        <Text h4 style={styles.labelStyle}>Current Weather in {`${demiLocal.LocalizedName}`}:</Text>
+                        {favorites.some(favorite => favorite.name == demiLocal.LocalizedName) ?
+                            <EvilIcon name='heart' color='red' size={40}></EvilIcon> : null
+                        }
+                        <Text style={styles.textStyle}>{demiCurrent.WeatherText}</Text>
+                        <Image style={styles.imageStyle} source={iconsImages(demiCurrent.WeatherIcon)} />
 
-                    <Text h4 style={styles.labelStyle}>Current Weather in {`${demiLocal.LocalizedName}`}:</Text>
-                    {favorites.some(favorite => favorite.name == demiLocal.LocalizedName) ?
-                        <EvilIcon name='heart' color='#f50' size={40}></EvilIcon> : null
-                    }
-                    <Text style={styles.textStyle}>{demiCurrent.WeatherText}</Text>
-                    <Image style={styles.imageStyle} source={iconsImages(demiCurrent.WeatherIcon)} />
-
-                    <View>
-                        <Text style={styles.textStyle}>{`${currentToggleTempValue}°${toggleTempUnit}`}</Text>
-                        <TouchableOpacity onPress={() => toggleTempUnits(toggleTempUnit, currentToggleTempValue)}>
-                            <Text style={[styles.textStyle, { color: '#3399ff' }]}>Press to change units</Text>
-                        </TouchableOpacity>
+                        <View>
+                            <Text style={styles.textStyle}>{`${currentToggleTempValue}°${toggleTempUnit}`}</Text>
+                            <TouchableOpacity onPress={() => toggleTempUnits(toggleTempUnit, currentToggleTempValue)}>
+                                <Text style={[styles.textStyle, { color: '#3399ff' }]}>Press to change units</Text>
+                            </TouchableOpacity>
+                        </View>
                     </View>
+
+                    <View style={{ alignItems: 'center', margin: "2%" }}>
+                        <Button buttonStyle={styles.buttonStyle} title={favorites.some(favorite => favorite.name == demiLocal.LocalizedName) ? 'Remove from favorites' : 'Add to favorites'} onPress={handleFavorites} />
+                    </View>
+
+                    <View style={{ alignItems: 'center', justifyContent: 'center' }}>
+                        <Text h4 style={styles.labelStyle} > next 5 day forecast:</Text>
+                        <Text style={[styles.textStyle, { width: '90%' }]}>{demiFive?.Headline?.Text}</Text>
+                    </View>
+
                 </View>
 
-                <View style={{ alignItems: 'center', margin: "2%" }}>
-                    <Button buttonStyle={styles.buttonStyle} title={favorites.some(favorite => favorite.name == demiLocal.LocalizedName) ? 'Remove from favorites' : 'Add to favorites'} onPress={handleFavorites} />
-                </View>
-
-                <View style={{ alignItems: 'center', justifyContent: 'center' }}>
-                    <Text h4 style={styles.labelStyle} > next 5 day forecast:</Text>
-                    <Text style={[styles.textStyle, { width: '90%' }]}>{demiFive?.Headline?.Text}</Text>
-                </View>
-
-            </View>
-
-            <ScrollView horizontal={true}>
-                <View style={styles.fiveDaysForecastView}>
-                    {demiFive?.DailyForecasts?.map(dailyForecast => {
-                        const date = new Date(dailyForecast.Date).toString();
-                        const spaceIndex = date.indexOf(' ');
-                        return (
-                            <Card key={dailyForecast.Date} containerStyle={{ borderColor: colors.border, backgroundColor: colors.background }}>
-                                <Fragment>
-                                    <Text h4 style={styles.textStyle}>{date.substr(0, spaceIndex)}</Text>
-                                    <Image style={styles.imageStyle} source={iconsImages(dailyForecast.Day.Icon)} />
-                                    <Text style={styles.textStyle} >{`Max: ${dailyForecast?.Temperature?.Maximum.Value}°${dailyForecast?.Temperature?.Maximum.Unit}`}</Text>
-                                    <Text style={styles.textStyle} >{`Min: ${dailyForecast?.Temperature?.Minimum.Value}°${dailyForecast?.Temperature?.Minimum.Unit}`}</Text>
-                                </Fragment>
-                            </Card>
-                        )
-                    })}
-                </View>
-            </ScrollView>
-        </KeyboardAwareScrollView >
+                <ScrollView horizontal={true}>
+                    <View style={styles.fiveDaysForecastView}>
+                        {demiFive?.DailyForecasts?.map(dailyForecast => {
+                            const date = new Date(dailyForecast.Date).toString();
+                            const spaceIndex = date.indexOf(' ');
+                            return (
+                                <Card key={dailyForecast.Date} containerStyle={{ borderColor: colors.border, backgroundColor: colors.background }}>
+                                    <Fragment>
+                                        <Text h4 style={styles.textStyle}>{date.substr(0, spaceIndex)}</Text>
+                                        <Image style={styles.imageStyle} source={iconsImages(dailyForecast.Day.Icon)} />
+                                        <Text style={styles.textStyle} >{`Max: ${dailyForecast?.Temperature?.Maximum.Value}°${dailyForecast?.Temperature?.Maximum.Unit}`}</Text>
+                                        <Text style={styles.textStyle} >{`Min: ${dailyForecast?.Temperature?.Minimum.Value}°${dailyForecast?.Temperature?.Minimum.Unit}`}</Text>
+                                    </Fragment>
+                                </Card>
+                            )
+                        })}
+                    </View>
+                </ScrollView>
+            </KeyboardAwareScrollView >
+        )
     )
-    // )
 
 };
 
