@@ -32,9 +32,9 @@ const Favorites = ({ navigation }: NavigationProps) => {
         },
     });
 
-    const showFavoriteDetails = (key: string) => {
+    const showFavoriteDetails = (name: string) => {
         navigation.navigate('Home')
-        dispatch({ type: ActionTypes.setSearchedCity, searchedCity: key });
+        dispatch({ type: ActionTypes.setSearchedCity, searchedCity: name });
     }
     return (
         <View style={styles.container}>
@@ -45,7 +45,7 @@ const Favorites = ({ navigation }: NavigationProps) => {
                 <View style={{ flexDirection: 'row' }}>
                     {favorites.map(favorite => {
                         return (
-                            <TouchableOpacity key={favorite.id} onPress={() => showFavoriteDetails(favorite.id)}>
+                            <TouchableOpacity key={favorite.id} onPress={() => showFavoriteDetails(favorite.name)}>
                                 <Card containerStyle={styles.cardStyle}>
                                     <Text style={styles.textStyle}>{favorite.name}</Text>
                                     <Text style={styles.textStyle}>{`${favorite.temperatureValue}°${favorite.temperatureUnit}`}</Text>
