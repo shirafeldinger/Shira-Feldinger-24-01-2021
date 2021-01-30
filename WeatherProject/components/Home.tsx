@@ -19,7 +19,7 @@ const Home = () => {
     const favorites = useSelector<WeatherState>(state => state.favorites) as Array<Favorite>
     const dispatch = useDispatch();
     const { colors } = useTheme();
-    const [input, setInput] = useState('')
+    const [inputValue, setInputValue] = useState('')
     const [currentToggleTempValue, setCurrentToggleTempValue] = useState(0)
     const [toggleTempUnit, setToggleTempUnit] = useState('F')
     const [loading, setLoading] = useState(true);
@@ -159,8 +159,8 @@ const Home = () => {
 
 
     const searchedValidation = () => {
-        setInput('');
-        if (input.length === 0) {
+        setInputValue('');
+        if (inputValue.length === 0) {
             Toast.show({
                 text1: 'Please enter a city name',
                 type: 'error',
@@ -170,7 +170,7 @@ const Home = () => {
             });
             return;
         };
-        dispatch({ type: ActionTypes.setSearchedCity, searchedCity: input });
+        dispatch({ type: ActionTypes.setSearchedCity, searchedCity: inputValue });
     };
 
     const handleFavorites = () => {
@@ -211,10 +211,10 @@ const Home = () => {
             <KeyboardAwareScrollView>
                 <View style={styles.inputView} >
                     <TextInput style={styles.inputStyle}
-                        onChangeText={text => { text.replace(/[^A-Za-z]/ig, ''); setInput(text) }}
+                        onChangeText={text => { text.replace(/[^A-Za-z]/ig, ''); setInputValue(text) }}
                         placeholder="Search City..."
                         placeholderTextColor={colors.text}
-                        value={input} />
+                        value={inputValue} />
                     <EvilIcon onPress={searchedValidation} name={'search'} size={25} style={{ position: 'absolute', right: '27%' }} />
                 </View>
 
@@ -250,6 +250,7 @@ const Home = () => {
                 <ScrollView horizontal={true}>
                     <View style={styles.fiveDaysForecastView}>
                         {fiveDaysForecast?.DailyForecasts?.map(dailyForecast => {
+                            // get only name of day from Date
                             const date = new Date(dailyForecast.Date).toString();
                             const spaceIndex = date.indexOf(' ');
                             return (
