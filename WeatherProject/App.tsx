@@ -26,13 +26,13 @@ const App = () => {
                 onPress={(themeIndex) => {
                   setThemeIndex(themeIndex);
                 }}
-                selectedIndex={themeIndex} buttons={themeButtons} containerStyle={{ width: dimensions.width < 350 ? 80 : 100, }} />
+                selectedIndex={themeIndex} buttons={themeButtons} containerStyle={{ width: dimensions.width < 350 ? 80 : 100 }} />
               <ButtonGroup
                 onPress={(selectedIndex) => {
                   setSelectedIndex(selectedIndex);
                   navigation.navigate(pagesButtons[selectedIndex])
                 }}
-                selectedIndex={selectedIndex} buttons={pagesButtons} containerStyle={{ width: dimensions.width < 350 ? 130 : 150, }} />
+                selectedIndex={selectedIndex} buttons={pagesButtons} containerStyle={{ width: dimensions.width < 350 ? 130 : 150 }} />
             </View>
           )
         })}>

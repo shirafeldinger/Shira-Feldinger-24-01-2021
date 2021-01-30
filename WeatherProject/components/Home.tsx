@@ -66,36 +66,46 @@ const Home = () => {
         }
 
     });
-    // useEffect(() => {
-    //     setLoading(true);
-    //     fetchLocation().then((key: string) => {
-    //         Promise.all([fetchCurrentWeather(key), fiveDaysForecasts(key)]).then(() => {
-    //             setTimeout(setCurrentToggleTempValue(currentDay.Temperature.Imperical.Value), 10)
-    //             setLoading(false)
-
-    //         });
-    //     }).catch(error => {
-    //         setErrors(error);
-    //         Toast.show({
-    //             text1: error,
-    //             type: 'error',
-    //             visibilityTime: 3000,
-    //             autoHide: true,
-    //             position: 'bottom'
-    //         });
-    //     });
-    // }, [searchedCity]);
-
     useEffect(() => {
-        const promise1 = new Promise((resolve, reject) => {
-            resolve('Success!');
-        });
         setLoading(true);
-        promise1.then(() => {
-            setCurrentToggleTempValue(demiCurrent.Temperature.Imperical.Value)
+        fetchLocation().then((key: string) => {
+            Promise.all([fetchCurrentWeather(key), fiveDaysForecasts(key)]).then(() => {
+                setCurrentToggleTempValue(currentDay.Temperature.Imperial.Value)
+                setLoading(false)
+            }).catch(error => {
+                setErrors(error);
+                setLoading(false)
+                Toast.show({
+                    text1: error,
+                    type: 'error',
+                    visibilityTime: 3000,
+                    autoHide: true,
+                    position: 'bottom'
+                });
+            });
+        }).catch(error => {
+            setErrors(error);
             setLoading(false)
-        })
-    }, [])
+            Toast.show({
+                text1: error,
+                type: 'error',
+                visibilityTime: 3000,
+                autoHide: true,
+                position: 'bottom'
+            });
+        });
+    }, [searchedCity]);
+
+    // useEffect(() => {
+    //     const promise1 = new Promise((resolve, reject) => {
+    //         resolve('Success!');
+    //     });
+    //     setLoading(true);
+    //     promise1.then(() => {
+    //         setCurrentToggleTempValue(demiCurrent.Temperature.Imperical.Value)
+    //         setLoading(false)
+    //     })
+    // }, [])
 
     const fetchLocation = async (): Promise<string> => {
         const baseUrl = 'http://dataservice.accuweather.com/locations/v1/cities/autocomplete'
@@ -107,13 +117,16 @@ const Home = () => {
                 dispatch({ type: ActionTypes.setLocation, location: data[0] });
                 return Promise.resolve(data[0]?.Key as string);
             } else {
+                dispatch({ type: ActionTypes.setSearchedCity, searchedCity: 'Tel Aviv' });
                 return Promise.reject("could find location");
+
             }
         } catch (err) {
             setErrors(error);
             return Promise.reject(err);
         };
     };
+
 
     const fetchCurrentWeather = async (key: string) => {
         const baseUrl = 'http://dataservice.accuweather.com/currentconditions/v1'
@@ -131,6 +144,7 @@ const Home = () => {
         };
         return Promise.resolve();
     };
+
 
     const fiveDaysForecasts = async (key: string) => {
         const baseUrl = 'http://dataservice.accuweather.com/forecasts/v1/daily/5day'
@@ -150,6 +164,7 @@ const Home = () => {
         return Promise.resolve();
     };
 
+
     const searchedValidation = () => {
         setInput('');
         if (input.length === 0) {
@@ -167,15 +182,15 @@ const Home = () => {
 
     const handleFavorites = () => {
         let newFavorites: Array<Favorite> = [...favorites];
-        let cityIndex = newFavorites.findIndex(favorite => favorite.name == demiLocal.LocalizedName)
+        let cityIndex = newFavorites.findIndex(favorite => favorite.name == location.LocalizedName)
         if (cityIndex == -1) {
             newFavorites.push({
-                temperatureValue: demiCurrent.Temperature.Metric.Value, temperatureUnit: demiCurrent.Temperature.Metric.Unit,
-                currentWeather: demiCurrent.WeatherText, id: demiLocal.Key, name: demiLocal.LocalizedName, icon: demiCurrent.WeatherIcon
+                temperatureValue: currentDay.Temperature.Metric.Value, temperatureUnit: currentDay.Temperature.Metric.Unit,
+                currentWeather: currentDay.WeatherText, id: location.Key, name: location.LocalizedName, icon: currentDay.WeatherIcon
             });
             dispatch({ type: ActionTypes.setFavorites, favorites: newFavorites });
         } else {
-            const removeFavorites = newFavorites.filter(favorite => favorite.name !== demiLocal.LocalizedName);
+            const removeFavorites = newFavorites.filter(favorite => favorite.name !== location.LocalizedName);
             dispatch({ type: ActionTypes.setFavorites, favorites: removeFavorites })
         };
     };
@@ -212,13 +227,13 @@ const Home = () => {
 
                 <View style={{ margin: dimensions.width < 350 ? '2%' : '5%', }}  >
                     <View style={{ alignItems: 'center', justifyContent: 'center' }}>
-
-                        <Text h4 style={styles.labelStyle}>Current Weather in {`${demiLocal.LocalizedName}`}:</Text>
-                        {favorites.some(favorite => favorite.name == demiLocal.LocalizedName) ?
+                        {favorites.some(favorite => favorite.name == location.LocalizedName) ?
                             <EvilIcon name='heart' color='red' size={40}></EvilIcon> : null
                         }
-                        <Text style={styles.textStyle}>{demiCurrent.WeatherText}</Text>
-                        <Image style={styles.imageStyle} source={iconsImages(demiCurrent.WeatherIcon)} />
+                        <Text h4 style={styles.labelStyle}>Current Weather in {`${location.LocalizedName}`}:</Text>
+
+                        <Text style={styles.textStyle}>{currentDay.WeatherText}</Text>
+                        <Image style={styles.imageStyle} source={iconsImages(currentDay.WeatherIcon)} />
 
                         <View>
                             <Text style={styles.textStyle}>{`${currentToggleTempValue}°${toggleTempUnit}`}</Text>
@@ -229,19 +244,19 @@ const Home = () => {
                     </View>
 
                     <View style={{ alignItems: 'center', margin: "2%" }}>
-                        <Button buttonStyle={styles.buttonStyle} title={favorites.some(favorite => favorite.name == demiLocal.LocalizedName) ? 'Remove from favorites' : 'Add to favorites'} onPress={handleFavorites} />
+                        <Button buttonStyle={styles.buttonStyle} title={favorites.some(favorite => favorite.name == location.LocalizedName) ? 'Remove from favorites' : 'Add to favorites'} onPress={handleFavorites} />
                     </View>
 
                     <View style={{ alignItems: 'center', justifyContent: 'center' }}>
                         <Text h4 style={styles.labelStyle} > next 5 day forecast:</Text>
-                        <Text style={[styles.textStyle, { width: '90%' }]}>{demiFive?.Headline?.Text}</Text>
+                        <Text style={[styles.textStyle, { width: '90%' }]}>{fiveDaysForecast?.Headline?.Text}</Text>
                     </View>
 
                 </View>
 
                 <ScrollView horizontal={true}>
                     <View style={styles.fiveDaysForecastView}>
-                        {demiFive?.DailyForecasts?.map(dailyForecast => {
+                        {fiveDaysForecast?.DailyForecasts?.map(dailyForecast => {
                             const date = new Date(dailyForecast.Date).toString();
                             const spaceIndex = date.indexOf(' ');
                             return (

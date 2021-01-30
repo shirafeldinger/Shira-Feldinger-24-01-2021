@@ -14,7 +14,7 @@ export interface CurrentWeather {
   MobileLink: string;
   PrecipitationType: any;
   Temperature: {
-    Imperical: Temperature;
+    Imperial: Temperature;
     Metric: Temperature;
   };
   WeatherIcon: number;
