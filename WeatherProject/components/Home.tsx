@@ -23,7 +23,6 @@ const Home = () => {
     const [currentToggleTempValue, setCurrentToggleTempValue] = useState(0)
     const [toggleTempUnit, setToggleTempUnit] = useState('F')
     const [loading, setLoading] = useState(true);
-    const [errors, setErrors] = useState('');
 
 
     const styles = StyleSheet.create({
@@ -84,11 +83,9 @@ const Home = () => {
             Promise.all([fetchCurrentWeather(key), fiveDaysForecasts(key)]).then(() => {
                 setLoading(false)
             }).catch(error => {
-                console.log(error);
-                setErrors(`${error}`);
                 setLoading(false)
                 Toast.show({
-                    text1: errors,
+                    text1: error,
                     type: 'error',
                     visibilityTime: 3000,
                     autoHide: true,
@@ -96,11 +93,9 @@ const Home = () => {
                 });
             });
         }).catch(error => {
-            console.log(error);
-            setErrors(`${error}`);
             setLoading(false)
             Toast.show({
-                text1: errors,
+                text1: error,
                 type: 'error',
                 visibilityTime: 3000,
                 autoHide: true,
@@ -124,7 +119,6 @@ const Home = () => {
 
             }
         } catch (err) {
-            setErrors(`${err}`);
             return Promise.reject(err);
         };
     };
@@ -142,7 +136,6 @@ const Home = () => {
                 return Promise.reject("could find current weather");
             }
         } catch (err) {
-            setErrors(`${err}`);
             return Promise.reject(err);
         };
     };
@@ -160,7 +153,6 @@ const Home = () => {
                 return Promise.reject("could find weekly weather");
             }
         } catch (err) {
-            setErrors(`${err}`);
             return Promise.reject(err);
         };
     };
