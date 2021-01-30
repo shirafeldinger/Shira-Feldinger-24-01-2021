@@ -69,7 +69,6 @@ const Home = () => {
     useEffect(() => {
         if (currentDay) {
             setCurrentToggleTempValue(currentDay.Temperature.Imperial.Value)
-            setLoading(false)
         }
     }, [currentDay])
 
@@ -77,7 +76,9 @@ const Home = () => {
         setLoading(true);
         fetchLocation().then((key: string) => {
             Promise.all([fetchCurrentWeather(key), fiveDaysForecasts(key)]).then(() => {
+                setLoading(false)
             }).catch(error => {
+                console.log(error);
                 setErrors(`${error}`);
                 setLoading(false)
                 Toast.show({
@@ -89,6 +90,7 @@ const Home = () => {
                 });
             });
         }).catch(error => {
+            console.log(error);
             setErrors(`${error}`);
             setLoading(false)
             Toast.show({

@@ -20,7 +20,7 @@ const Favorites = ({ navigation }: NavigationProps) => {
         },
         cardStyle: {
             height: 150,
-            width: 100,
+            width: 130,
             alignItems: 'center',
             justifyContent: 'space-around',
             backgroundColor: colors.background,
