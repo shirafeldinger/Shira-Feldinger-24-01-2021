@@ -62,7 +62,13 @@ const Home = () => {
             alignItems: 'center',
             justifyContent: 'center', flexDirection: 'row',
             margin: dimensions.width < 350 ? '2%' : '5%',
+        },
+        cardStyle: {
+            borderColor: colors.border,
+            backgroundColor: colors.background,
+            elevation: 5
         }
+
 
     });
 
@@ -217,7 +223,8 @@ const Home = () => {
                         placeholder="Search City..."
                         placeholderTextColor={colors.text}
                         value={inputValue} />
-                    <EvilIcon onPress={searchedValidation} name={'search'} size={25} style={{ position: 'absolute', right: '27%' }} />
+                    <Button buttonStyle={{ height: 51, width: 40 }} onPress={searchedValidation}
+                        icon={<EvilIcon name={'search'} color={'white'} size={25} style={{ position: 'absolute' }} />} />
                 </View>
 
                 <View style={{ margin: dimensions.width < 350 ? '2%' : '5%', }}  >
@@ -239,7 +246,9 @@ const Home = () => {
                     </View>
 
                     <View style={{ alignItems: 'center', margin: "2%" }}>
-                        <Button buttonStyle={styles.buttonStyle} title={favorites.some(favorite => favorite.name == location.LocalizedName) ? 'Remove from favorites' : 'Add to favorites'} onPress={handleFavorites} />
+                        <Button buttonStyle={styles.buttonStyle}
+                            title={favorites.some(favorite => favorite.name == location.LocalizedName) ? 'Remove from favorites' : 'Add to favorites'}
+                            onPress={handleFavorites} />
                     </View>
 
                     <View style={{ alignItems: 'center', justifyContent: 'center' }}>
@@ -256,7 +265,7 @@ const Home = () => {
                             const date = new Date(dailyForecast.Date).toString();
                             const spaceIndex = date.indexOf(' ');
                             return (
-                                <Card key={dailyForecast.Date} containerStyle={{ borderColor: colors.border, backgroundColor: colors.background }}>
+                                <Card key={dailyForecast.Date} containerStyle={styles.cardStyle}>
                                     <Fragment>
                                         <Text h4 style={styles.textStyle}>{date.substr(0, spaceIndex)}</Text>
                                         <Image style={styles.imageStyle} source={iconsImages(dailyForecast.Day.Icon)} />
