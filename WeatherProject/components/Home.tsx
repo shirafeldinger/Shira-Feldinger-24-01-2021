@@ -1,10 +1,9 @@
 import React, { Fragment, useEffect, useState } from "react";
-import { ActivityIndicator, Dimensions, Image, KeyboardAvoidingView, StyleSheet, View } from "react-native";
+import { ActivityIndicator, Dimensions, Image, StyleSheet, View } from "react-native";
 import { Text, Card, Button } from 'react-native-elements';
 import { ScrollView, TextInput, TouchableOpacity } from "react-native-gesture-handler";
 import { useDispatch, useSelector } from "react-redux";
 import { ActionTypes, CurrentWeather, FiveDaysForecast, WeatherState, Location, Favorite } from "../types";
-import { demiCurrent, demiFive, demiLocal } from "../demiData";
 import Toast from 'react-native-toast-message';
 import { useTheme } from '@react-navigation/native';
 import { default as EvilIcon } from 'react-native-vector-icons/EvilIcons';
@@ -24,7 +23,7 @@ const Home = () => {
     const [currentToggleTempValue, setCurrentToggleTempValue] = useState(0)
     const [toggleTempUnit, setToggleTempUnit] = useState('F')
     const [loading, setLoading] = useState(true);
-    const [error, setErrors] = useState('');
+    const [errors, setErrors] = useState('');
 
 
     const styles = StyleSheet.create({
@@ -66,17 +65,23 @@ const Home = () => {
         }
 
     });
+
+    useEffect(() => {
+        if (currentDay) {
+            setCurrentToggleTempValue(currentDay.Temperature.Imperial.Value)
+            setLoading(false)
+        }
+    }, [currentDay])
+
     useEffect(() => {
         setLoading(true);
         fetchLocation().then((key: string) => {
             Promise.all([fetchCurrentWeather(key), fiveDaysForecasts(key)]).then(() => {
-                setCurrentToggleTempValue(currentDay.Temperature.Imperial.Value)
-                setLoading(false)
             }).catch(error => {
-                setErrors(error);
+                setErrors(`${error}`);
                 setLoading(false)
                 Toast.show({
-                    text1: error,
+                    text1: errors,
                     type: 'error',
                     visibilityTime: 3000,
                     autoHide: true,
@@ -84,10 +89,10 @@ const Home = () => {
                 });
             });
         }).catch(error => {
-            setErrors(error);
+            setErrors(`${error}`);
             setLoading(false)
             Toast.show({
-                text1: error,
+                text1: errors,
                 type: 'error',
                 visibilityTime: 3000,
                 autoHide: true,
@@ -95,17 +100,6 @@ const Home = () => {
             });
         });
     }, [searchedCity]);
-
-    // useEffect(() => {
-    //     const promise1 = new Promise((resolve, reject) => {
-    //         resolve('Success!');
-    //     });
-    //     setLoading(true);
-    //     promise1.then(() => {
-    //         setCurrentToggleTempValue(demiCurrent.Temperature.Imperical.Value)
-    //         setLoading(false)
-    //     })
-    // }, [])
 
     const fetchLocation = async (): Promise<string> => {
         const baseUrl = 'http://dataservice.accuweather.com/locations/v1/cities/autocomplete'
@@ -122,7 +116,7 @@ const Home = () => {
 
             }
         } catch (err) {
-            setErrors(error);
+            setErrors(`${err}`);
             return Promise.reject(err);
         };
     };
@@ -135,14 +129,14 @@ const Home = () => {
             const data = await res.json()
             if (data[0]) {
                 dispatch({ type: ActionTypes.SetCurrentWeather, currentDay: data[0] });
+                return Promise.resolve();
             } else {
                 return Promise.reject("could find current weather");
             }
         } catch (err) {
-            setErrors(error);
+            setErrors(`${err}`);
             return Promise.reject(err);
         };
-        return Promise.resolve();
     };
 
 
@@ -151,17 +145,16 @@ const Home = () => {
         try {
             const res = await fetch(`${baseUrl}/${key}?apikey=AajKuPVPSQaHeVqfDiMiscjqoUbACFMx`)
             const data = await res.json();
-
             if (data) {
                 dispatch({ type: ActionTypes.setFiveDaysForecast, fiveDaysForecast: data });
+                return Promise.resolve();
             } else {
                 return Promise.reject("could find weekly weather");
             }
         } catch (err) {
-            setErrors(error);
+            setErrors(`${err}`);
             return Promise.reject(err);
         };
-        return Promise.resolve();
     };
 
 

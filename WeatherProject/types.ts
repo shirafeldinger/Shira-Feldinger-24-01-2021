@@ -1,11 +1,11 @@
 import {StackNavigationProp} from '@react-navigation/stack/lib/typescript/src/types';
 
-export interface Temperature {
+export type Temperature = {
   Unit: string;
   UnitType: number;
   Value: number;
-}
-export interface CurrentWeather {
+};
+export type CurrentWeather = {
   EpochTime?: number;
   HasPrecipitation?: boolean;
   IsDayTime: boolean;
@@ -19,13 +19,13 @@ export interface CurrentWeather {
   };
   WeatherIcon: number;
   WeatherText: string;
-}
+};
 
-export interface DayNight {
+export type DayNight = {
   HasPrecipitation: boolean;
   Icon: number;
   IconPhrase: string;
-}
+};
 
 export type Headline = {
   Category?: string;
@@ -38,7 +38,7 @@ export type Headline = {
   Severity: 4;
   Text: string;
 };
-export interface DailyForecasts {
+export type DailyForecasts = {
   Date: string;
   Day: DayNight;
   EpochDate?: number;
@@ -49,7 +49,7 @@ export interface DailyForecasts {
     Maximum: Temperature;
     Minimum: Temperature;
   };
-}
+};
 export type FiveDaysForecast = {
   Headline: Headline | undefined;
   DailyForecasts: Array<DailyForecasts> | undefined;
