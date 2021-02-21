@@ -1,4 +1,5 @@
 import {StackNavigationProp} from '@react-navigation/stack/lib/typescript/src/types';
+import {Dispatch, SetStateAction} from 'react';
 
 export type Temperature = {
   Unit: string;
@@ -123,4 +124,9 @@ export type Favorite = {
   temperatureValue: number;
   temperatureUnit: string;
   icon: number;
+};
+
+export type themeProps = {
+  themeIndex: number;
+  setThemeIndex: Dispatch<SetStateAction<number>>;
 };
